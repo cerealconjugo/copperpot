@@ -1,7 +1,7 @@
-package com.davigj.copperpot.common.registry;
+package com.davigj.copperpot.core.registry;
 
 import com.davigj.copperpot.CopperPot;
-import com.davigj.copperpot.common.CopperPotConfig;
+import com.davigj.copperpot.CopperPotConfig;
 import com.davigj.copperpot.common.item.*;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -9,13 +9,10 @@ import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 import vectorwing.farmersdelight.common.registry.ModEffects;
-
-import java.util.ArrayList;
 
 public class CPItems {
    public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CopperPot.MODID);

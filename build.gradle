@@ -4,7 +4,6 @@ buildscript {
         maven { url = 'https://maven.parchmentmc.org' }
         maven {
             url "https://repo.spongepowered.org/repository/maven-public/"
-            // content { includeGroup "org.spongepowered" }
         }
         mavenCentral()
     }
@@ -38,15 +37,10 @@ minecraft {
     runs {
         client {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
             mods {
-                brewinandchewin {
+                copperpot {
                     source sourceSets.main
                 }
             }
@@ -54,15 +48,10 @@ minecraft {
 
         server {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
             mods {
-                brewinandchewin {
+                copperpot {
                     source sourceSets.main
                 }
             }
@@ -70,17 +59,10 @@ minecraft {
 
         data {
             workingDirectory project.file('run')
-
-            // Recommended logging data for a userdev environment
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
-
-            // Recommended logging level for the console
             property 'forge.logging.console.level', 'debug'
-
             args '--mod', 'copperpot', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
-
             environment 'target', 'fmluserdevdata'
-
             args "--all", "--mod", "copperpot", "--existing-mod", "farmersdelight"
 
             mods {
@@ -118,7 +100,6 @@ sourceSets.main.resources {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-
     implementation fg.deobf("curse.maven:blueprint-382216:5292242")
     implementation fg.deobf("curse.maven:farmersdelight-398521:5051242")
 

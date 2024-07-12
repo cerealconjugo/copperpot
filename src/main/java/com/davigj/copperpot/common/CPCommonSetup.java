@@ -2,7 +2,7 @@ package com.davigj.copperpot.common;
 
 import com.davigj.copperpot.CopperPot;
 import com.davigj.copperpot.common.loot.CPCopyMealFunction;
-import com.davigj.copperpot.common.registry.CPItems;
+import com.davigj.copperpot.core.registry.CPItems;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;

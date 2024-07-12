@@ -1,8 +1,8 @@
 package com.davigj.copperpot.common.block.entity.container;
 
 import com.davigj.copperpot.common.block.entity.CopperPotBlockEntity;
-import com.davigj.copperpot.common.registry.CPBlocks;
-import com.davigj.copperpot.common.registry.CPMenuTypes;
+import com.davigj.copperpot.core.registry.CPBlocks;
+import com.davigj.copperpot.core.registry.CPMenuTypes;
 import com.mojang.datafixers.util.Pair;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.resources.ResourceLocation;

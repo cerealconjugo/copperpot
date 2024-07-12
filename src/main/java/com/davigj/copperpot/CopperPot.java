@@ -1,15 +1,13 @@
 package com.davigj.copperpot;
 
-import com.davigj.copperpot.common.CopperPotConfig;
 import com.davigj.copperpot.common.registry.*;
+import com.davigj.copperpot.core.registry.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import org.apache.logging.log4j.LogManager;
-import org.slf4j.Logger;
 
 @Mod(CopperPot.MODID)
 public class CopperPot

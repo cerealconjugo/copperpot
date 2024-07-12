@@ -1,4 +1,4 @@
-package com.davigj.copperpot.common.registry;
+package com.davigj.copperpot.core.registry;
 
 import com.davigj.copperpot.CopperPot;
 import com.davigj.copperpot.common.block.entity.CopperPotBlockEntity;

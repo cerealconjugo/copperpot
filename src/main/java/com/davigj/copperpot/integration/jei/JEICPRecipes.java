@@ -1,19 +1,14 @@
 package com.davigj.copperpot.integration.jei;
 
 import com.davigj.copperpot.common.crafting.CopperPotRecipe;
-import com.davigj.copperpot.common.registry.CPRecipeTypes;
+import com.davigj.copperpot.core.registry.CPRecipeTypes;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.core.NonNullList;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.RecipeManager;
-import vectorwing.farmersdelight.common.crafting.CookingPotRecipe;
 import vectorwing.farmersdelight.common.registry.ModRecipeTypes;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 public class JEICPRecipes {
 

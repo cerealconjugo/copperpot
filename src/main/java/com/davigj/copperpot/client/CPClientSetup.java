@@ -3,7 +3,7 @@ package com.davigj.copperpot.client;
 import com.davigj.copperpot.CopperPot;
 import com.davigj.copperpot.client.gui.CopperPotScreen;
 import com.davigj.copperpot.client.gui.CopperPotTooltip;
-import com.davigj.copperpot.common.registry.CPMenuTypes;
+import com.davigj.copperpot.core.registry.CPMenuTypes;
 import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.RegisterClientTooltipComponentFactoriesEvent;

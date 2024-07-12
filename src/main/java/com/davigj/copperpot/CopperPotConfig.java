@@ -1,4 +1,4 @@
-package com.davigj.copperpot.common;
+package com.davigj.copperpot;
 
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;

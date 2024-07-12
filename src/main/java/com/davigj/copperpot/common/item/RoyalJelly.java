@@ -1,7 +1,7 @@
 package com.davigj.copperpot.common.item;
 
 import com.davigj.copperpot.CopperPot;
-import com.davigj.copperpot.common.registry.CPItems;
+import com.davigj.copperpot.core.registry.CPItems;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
@@ -30,10 +30,8 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
-import org.apache.commons.compress.utils.Lists;
 import org.jetbrains.annotations.Nullable;
 import vectorwing.farmersdelight.common.utility.MathUtils;
-import vectorwing.farmersdelight.common.utility.TextUtils;
 
 import java.util.Iterator;
 import java.util.List;

@@ -1,8 +1,8 @@
 package com.davigj.copperpot.common.crafting;
 
-import com.davigj.copperpot.common.registry.CPItems;
-import com.davigj.copperpot.common.registry.CPRecipeSerializers;
-import com.davigj.copperpot.common.registry.CPRecipeTypes;
+import com.davigj.copperpot.core.registry.CPItems;
+import com.davigj.copperpot.core.registry.CPRecipeSerializers;
+import com.davigj.copperpot.core.registry.CPRecipeTypes;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;

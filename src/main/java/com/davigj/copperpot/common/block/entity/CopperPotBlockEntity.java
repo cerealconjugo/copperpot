@@ -1,14 +1,14 @@
 package com.davigj.copperpot.common.block.entity;
 
-import com.davigj.copperpot.common.CopperPotConfig;
+import com.davigj.copperpot.CopperPotConfig;
 import com.davigj.copperpot.common.block.CopperPotBlock;
 import com.davigj.copperpot.common.block.entity.container.CopperPotMenu;
 import com.davigj.copperpot.common.block.entity.inventory.CopperPotItemHandler;
 import com.davigj.copperpot.common.crafting.CopperPotRecipe;
-import com.davigj.copperpot.common.registry.CPBlockEntityTypes;
-import com.davigj.copperpot.common.registry.CPItems;
-import com.davigj.copperpot.common.registry.CPRecipeTypes;
-import com.davigj.copperpot.common.tags.CPTags;
+import com.davigj.copperpot.core.registry.CPBlockEntityTypes;
+import com.davigj.copperpot.core.registry.CPItems;
+import com.davigj.copperpot.core.registry.CPRecipeTypes;
+import com.davigj.copperpot.core.tags.CPBlockTags;
 import com.google.common.collect.Lists;
 import it.unimi.dsi.fastutil.objects.Object2IntMap;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
@@ -16,7 +16,6 @@ import it.unimi.dsi.fastutil.objects.ObjectIterator;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
-import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -42,7 +41,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
@@ -55,10 +53,8 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 import vectorwing.farmersdelight.common.block.entity.HeatableBlockEntity;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
-import vectorwing.farmersdelight.common.mixin.accessor.RecipeManagerAccessor;
 import vectorwing.farmersdelight.common.registry.*;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
-import vectorwing.farmersdelight.common.utility.TextUtils;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -241,10 +237,10 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       while ( var8.hasNext() ) {
          BlockPos neighborPos = var8.next();
          BlockState neighborState = worldIn.getBlockState(neighborPos);
-         if ( neighborState.is(CPTags.PARTIAL_FUME_INHIBITORS) ) {
+         if ( neighborState.is(CPBlockTags.PARTIAL_FUME_INHIBITORS) ) {
             inhibited = 1.0D;
          }
-         if ( neighborState.is(CPTags.FUME_INHIBITORS) ) {
+         if ( neighborState.is(CPBlockTags.FUME_INHIBITORS) ) {
             return 0.0D;
          }
       }

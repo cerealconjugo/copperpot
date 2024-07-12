@@ -1,8 +1,7 @@
-package com.davigj.copperpot.common.registry;
+package com.davigj.copperpot.core.registry;
 
 import com.davigj.copperpot.CopperPot;
 import net.minecraft.core.registries.Registries;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -10,9 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
-import net.minecraftforge.registries.RegistryObject;
 import vectorwing.farmersdelight.common.registry.ModCreativeTabs;
-import vectorwing.farmersdelight.common.utility.TextUtils;
 
 @Mod.EventBusSubscriber(modid = CopperPot.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class CPCreativeTab {

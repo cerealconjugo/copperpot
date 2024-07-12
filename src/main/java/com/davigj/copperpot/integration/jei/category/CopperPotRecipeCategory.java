@@ -1,7 +1,7 @@
 package com.davigj.copperpot.integration.jei.category;
 
 import com.davigj.copperpot.common.crafting.CopperPotRecipe;
-import com.davigj.copperpot.common.registry.CPItems;
+import com.davigj.copperpot.core.registry.CPItems;
 import com.davigj.copperpot.integration.jei.JEICPRecipeTypes;
 import com.google.common.collect.ImmutableList;
 import mezz.jei.api.constants.VanillaTypes;
