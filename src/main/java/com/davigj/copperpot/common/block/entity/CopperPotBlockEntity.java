@@ -90,7 +90,7 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
 
    protected final RecipeType<? extends CopperPotRecipe> recipeType;
 
-   public CopperPotBlockEntity(BlockPos pos, BlockState state) {
+   public CopperPotBlockEntity( BlockPos pos, BlockState state ) {
       super(CPBlockEntityTypes.COPPER_POT.get(), pos, state);
       this.mealContainerStack = ItemStack.EMPTY;
       this.copperPotMenu = this.createIntArray();
@@ -103,14 +103,15 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       this.outputHandler = LazyOptional.of(() -> new CopperPotItemHandler(this.inventory, Direction.DOWN));
    }
 
-   public static ItemStack getMealFromItem(ItemStack copperPotStack) {
-      if (!copperPotStack.is(CPItems.COPPER_POT.get())) {
+   public static ItemStack getMealFromItem( ItemStack copperPotStack ) {
+      if ( !copperPotStack.is(CPItems.COPPER_POT.get()) ) {
          return ItemStack.EMPTY;
-      } else {
+      }
+      else {
          CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
-         if (compound != null) {
+         if ( compound != null ) {
             CompoundTag inventoryTag = compound.getCompound("Inventory");
-            if (inventoryTag.contains("Items", 9)) {
+            if ( inventoryTag.contains("Items", 9) ) {
                ItemStackHandler handler = new ItemStackHandler();
                handler.deserializeNBT(inventoryTag);
                return handler.getStackInSlot(3);
@@ -121,12 +122,12 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       }
    }
 
-   public static void takeServingFromItem(ItemStack copperPotStack) {
-      if (copperPotStack.is(CPItems.COPPER_POT.get())) {
+   public static void takeServingFromItem( ItemStack copperPotStack ) {
+      if ( copperPotStack.is(CPItems.COPPER_POT.get()) ) {
          CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
-         if (compound != null) {
+         if ( compound != null ) {
             CompoundTag inventoryTag = compound.getCompound("Inventory");
-            if (inventoryTag.contains("Items", 6)) {
+            if ( inventoryTag.contains("Items", 6) ) {
                ItemStackHandler handler = new ItemStackHandler();
                handler.deserializeNBT(inventoryTag);
                ItemStack newMealStack = handler.getStackInSlot(3);
@@ -139,22 +140,23 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       }
    }
 
-   public static ItemStack getContainerFromItem(ItemStack copperPotStack) {
-      if (!copperPotStack.is(CPItems.COPPER_POT.get())) {
+   public static ItemStack getContainerFromItem( ItemStack copperPotStack ) {
+      if ( !copperPotStack.is(CPItems.COPPER_POT.get()) ) {
          return ItemStack.EMPTY;
-      } else {
+      }
+      else {
          CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
          return compound != null ? ItemStack.of(compound.getCompound("Container")) : ItemStack.EMPTY;
       }
    }
 
-   public void load(CompoundTag compound) {
+   public void load( CompoundTag compound ) {
       super.load(compound);
       this.inventory.deserializeNBT(compound.getCompound("Inventory"));
       this.cookTime = compound.getInt("CookTime");
       this.cookTimeTotal = compound.getInt("CookTimeTotal");
       this.mealContainerStack = ItemStack.of(compound.getCompound("Container"));
-      if (compound.contains("CustomName", 8)) {
+      if ( compound.contains("CustomName", 8) ) {
          this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
       }
       this.hasEffect = compound.getBoolean("HasEffect");
@@ -162,49 +164,50 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       CompoundTag compoundRecipes = compound.getCompound("RecipesUsed");
       Iterator var3 = compoundRecipes.getAllKeys().iterator();
 
-      while(var3.hasNext()) {
-         String key = (String)var3.next();
+      while ( var3.hasNext() ) {
+         String key = (String) var3.next();
          this.usedRecipeTracker.put(new ResourceLocation(key), compoundRecipes.getInt(key));
       }
 
    }
 
-   public void saveAdditional(CompoundTag compound) {
+   public void saveAdditional( CompoundTag compound ) {
       super.saveAdditional(compound);
       compound.putInt("CookTime", this.cookTime);
       compound.putInt("CookTimeTotal", this.cookTimeTotal);
       compound.put("Container", this.mealContainerStack.serializeNBT());
-      if (this.customName != null) {
+      if ( this.customName != null ) {
          compound.putString("CustomName", Component.Serializer.toJson(this.customName));
       }
       compound.putBoolean("HasEffect", this.hasEffect);
 
       compound.put("Inventory", this.inventory.serializeNBT());
       CompoundTag compoundRecipes = new CompoundTag();
-      this.usedRecipeTracker.forEach((recipeId, craftedAmount) -> {
+      this.usedRecipeTracker.forEach(( recipeId, craftedAmount ) -> {
          compoundRecipes.putInt(recipeId.toString(), craftedAmount);
       });
       compound.put("RecipesUsed", compoundRecipes);
    }
 
-   private CompoundTag writeItems(CompoundTag compound) {
+   private CompoundTag writeItems( CompoundTag compound ) {
       super.saveAdditional(compound);
       compound.put("Container", this.mealContainerStack.serializeNBT());
       compound.put("Inventory", this.inventory.serializeNBT());
       return compound;
    }
 
-   public CompoundTag writeMeal(CompoundTag compound) {
-      if (this.getMeal().isEmpty()) {
+   public CompoundTag writeMeal( CompoundTag compound ) {
+      if ( this.getMeal().isEmpty() ) {
          return compound;
-      } else {
+      }
+      else {
          ItemStackHandler drops = new ItemStackHandler(6);
 
-         for(int i = 0; i < 6; ++i) {
+         for ( int i = 0; i < 6; ++i ) {
             drops.setStackInSlot(i, i == 3 ? this.inventory.getStackInSlot(i) : ItemStack.EMPTY);
          }
 
-         if (this.customName != null) {
+         if ( this.customName != null ) {
             compound.putString("CustomName", Component.Serializer.toJson(this.customName));
          }
 
@@ -215,7 +218,7 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
    }
 
 
-   private void effectCloud(Level worldIn, BlockPos pos) {
+   private void effectCloud( Level worldIn, BlockPos pos ) {
       AreaEffectCloud steam = new AreaEffectCloud(worldIn, pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D);
       steam.setDuration(15);
       steam.setRadius(0.1F);
@@ -225,101 +228,125 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       String[] effectName = effect.split(":", 2);
       MobEffectInstance effectInstance = new MobEffectInstance(getCookEffect(effectName[0], new ResourceLocation(effectName[0], effectName[1])).get(), effectDuration, effectAmplifier, false, true);
       double radius = fumesRadius(worldIn, pos);
-      for ( LivingEntity living : steam.level().getEntitiesOfClass(LivingEntity.class, steam.getBoundingBox().inflate(radius, 2.0D, radius))) {
+      for ( LivingEntity living : steam.level().getEntitiesOfClass(LivingEntity.class, steam.getBoundingBox().inflate(radius, 2.0D, radius)) ) {
          living.addEffect(effectInstance);
       }
       steam.addEffect(effectInstance);
       worldIn.addFreshEntity(steam);
    }
 
-   private double fumesRadius(Level worldIn, BlockPos pos) {
+   private double fumesRadius( Level worldIn, BlockPos pos ) {
       Iterator<BlockPos> var8 = BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 3, 1)).iterator();
       double inhibited = CopperPotConfig.COMMON.copperFumeRadius.get();
-      while(var8.hasNext()) {
+      while ( var8.hasNext() ) {
          BlockPos neighborPos = var8.next();
          BlockState neighborState = worldIn.getBlockState(neighborPos);
-         if (neighborState.is(CPTags.PARTIAL_FUME_INHIBITORS)) {
+         if ( neighborState.is(CPTags.PARTIAL_FUME_INHIBITORS) ) {
             inhibited = 1.0D;
          }
-         if (neighborState.is(CPTags.FUME_INHIBITORS)) {
+         if ( neighborState.is(CPTags.FUME_INHIBITORS) ) {
             return 0.0D;
          }
       }
       return inhibited;
    }
 
-   public static void cookingTick(Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot) {
+   public static void cookingTick( Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot ) {
       boolean isHeated = copperPot.isHeated(level, pos);
       boolean didInventoryChange = false;
-      if (isHeated && copperPot.hasInput() && state.getValue(CopperPotBlock.ENABLED)) {
+      if ( isHeated && copperPot.hasInput() && state.getValue(CopperPotBlock.ENABLED) ) {
          Optional<? extends CopperPotRecipe> recipe = copperPot.getMatchingRecipe(new RecipeWrapper(copperPot.inventory));
-         if (recipe.isPresent() && copperPot.canCook(recipe.get())) {
+         if ( recipe.isPresent() && copperPot.canCook(recipe.get()) ) {
             didInventoryChange = copperPot.processCooking(recipe.get(), copperPot);
-         } else {
+         }
+         else {
             copperPot.cookTime = 0;
          }
-      } else if (copperPot.cookTime > 0) {
+      }
+      else if ( copperPot.cookTime > 0 ) {
          copperPot.cookTime = Mth.clamp(copperPot.cookTime - 2, 0, copperPot.cookTimeTotal);
       }
 
       ItemStack mealStack = copperPot.getMeal();
-      if (!mealStack.isEmpty()) {
-         if (!copperPot.doesMealHaveContainer(mealStack)) {
+      if ( !mealStack.isEmpty() ) {
+         if ( !copperPot.doesMealHaveContainer(mealStack) ) {
             copperPot.moveMealToOutput();
             didInventoryChange = true;
-         } else if (!copperPot.inventory.getStackInSlot(3).isEmpty()) {
+         }
+         else if ( !copperPot.inventory.getStackInSlot(3).isEmpty() ) {
             copperPot.useStoredContainersOnMeal();
             didInventoryChange = true;
          }
       }
 
-      if (didInventoryChange) {
+      if ( didInventoryChange ) {
          copperPot.inventoryChanged();
       }
 
    }
 
-   private static Supplier<MobEffect> getCookEffect( String modid, ResourceLocation effect) {
-      return ( ModList.get().isLoaded(modid) ? () -> ForgeRegistries.MOB_EFFECTS.getValue(effect) : () -> null);
+
+   protected List<CopperPotRecipe> getAllRecipes() {
+      List<CopperPotRecipe> copperPot = this.level.getRecipeManager().getAllRecipesFor(CPRecipeTypes.COPPER_POT.get()).stream().toList();
+      List<ItemStack> results = copperPot.stream().map(( e ) -> e.getResultItem(null)).toList();
+
+      List<CopperPotRecipe> cookingPot = this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
+              .filter(recipe -> recipe.getIngredients().size() < 4)
+              .filter(recipe -> results.stream().noneMatch(( e ) -> e.is(recipe.getResultItem(null).getItem())))
+              .map(CopperPotRecipe::fromRecipe)
+              .toList();
+
+      return List.of(copperPot, cookingPot).stream().flatMap(List::stream).toList();
+   }
+
+   private static Supplier<MobEffect> getCookEffect( String modid, ResourceLocation effect ) {
+      return ( ModList.get().isLoaded(modid) ? () -> ForgeRegistries.MOB_EFFECTS.getValue(effect) : () -> null );
+   }
+
+   private Optional<CopperPotRecipe> getAllRecipesFor( RecipeWrapper pInventory, Level pLevel ) {
+      return getAllRecipes().stream().filter(( p_220266_ ) -> {
+         return p_220266_.matches(pInventory, pLevel);
+      }).findFirst();
    }
 
    protected ItemStack getRecipeContainer() {
-      return this.level.getRecipeManager().getRecipeFor(this.recipeType, new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getOutputContainer).orElse(ItemStack.EMPTY);
+      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getOutputContainer).orElse(ItemStack.EMPTY);
    }
+
    public boolean hasEffect() {
-      return this.level.getRecipeManager().getRecipeFor(this.recipeType, new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::hasEffect).orElse(false);
+      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::hasEffect).orElse(false);
    }
 
    public String getEffect() {
-      return this.level.getRecipeManager().getRecipeFor(this.recipeType, new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffect).orElse("");
+      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffect).orElse("");
    }
 
    public int getEffectDuration() {
-      return this.level.getRecipeManager().getRecipeFor(this.recipeType, new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectDuration).orElse(100);
+      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectDuration).orElse(100);
    }
 
    public int getEffectAmplifier() {
-      return this.level.getRecipeManager().getRecipeFor(this.recipeType, new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectAmplifier).orElse(0);
+      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectAmplifier).orElse(0);
    }
 
-   public static void animationTick(Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot) {
-      if (copperPot.isHeated(level, pos)) {
+   public static void animationTick( Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot ) {
+      if ( copperPot.isHeated(level, pos) ) {
          RandomSource random = level.random;
          double x;
          double y;
          double z;
-         if (random.nextFloat() < 0.07F) {
-            x = (double) pos.getX() + 0.5D + (random.nextDouble() * 0.6D - 0.3D);
+         if ( random.nextFloat() < 0.07F ) {
+            x = (double) pos.getX() + 0.5D + ( random.nextDouble() * 0.6D - 0.3D );
             y = (double) pos.getY() + 0.4D;
-            z = (double) pos.getZ() + 0.5D + (random.nextDouble() * 0.6D - 0.3D);
+            z = (double) pos.getZ() + 0.5D + ( random.nextDouble() * 0.6D - 0.3D );
             // pick your particles, come pick yourself some particles
             level.addParticle(ParticleTypes.CRIT, x, y, z, 0.0D, 0.0D, 0.0D);
          }
 
-         if (random.nextFloat() < 0.03F) {
-            x = (double) pos.getX() + 0.5D + (random.nextDouble() * 0.4D - 0.2D);
+         if ( random.nextFloat() < 0.03F ) {
+            x = (double) pos.getX() + 0.5D + ( random.nextDouble() * 0.4D - 0.2D );
             y = (double) pos.getY() + 0.4D;
-            z = (double) pos.getZ() + 0.5D + (random.nextDouble() * 0.4D - 0.2D);
+            z = (double) pos.getZ() + 0.5D + ( random.nextDouble() * 0.4D - 0.2D );
             level.addParticle(ParticleTypes.EFFECT, x, y, z, 0.0D, 0.0D, 0.0D);
          }
 
@@ -327,29 +354,30 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
 
    }
 
-   private Optional<? extends CopperPotRecipe> getMatchingRecipe(RecipeWrapper inventoryWrapper) {
-      if (this.level == null) {
+   private Optional<? extends CopperPotRecipe> getMatchingRecipe( RecipeWrapper inventoryWrapper ) {
+      if ( this.level == null ) {
          return Optional.empty();
-      } else {
-         if (lastRecipeID != null) {
-            Recipe<RecipeWrapper> recipe = ((RecipeManagerAccessor) level.getRecipeManager())
-                    .getRecipeMap(CPRecipeTypes.COPPER_POT.get())
-                    .get(lastRecipeID);
-            if (recipe instanceof CopperPotRecipe) {
-               if (recipe.matches(inventoryWrapper, level)) {
-                  return Optional.of((CopperPotRecipe) recipe);
+      }
+      else {
+         if ( lastRecipeID != null ) {
+            // get recipe by id
+            Optional<? extends Recipe<?>> recipe = getAllRecipes().stream().filter(aef -> aef.getId() == lastRecipeID).findFirst();
+            if ( recipe.isPresent() )
+               if ( recipe.get() instanceof CopperPotRecipe copPot ) {
+                  if ( copPot.matches(inventoryWrapper, level) ) {
+                     return Optional.of(copPot);
+                  }
+                  if ( ItemStack.isSameItem(copPot.getResultItem(this.level.registryAccess()), getMeal()) ) {
+                     return Optional.empty();
+                  }
                }
-               if (ItemStack.isSameItem(recipe.getResultItem(this.level.registryAccess()), getMeal())) {
-                  return Optional.empty();
-               }
-            }
          }
 
-         if (this.checkNewRecipe) {
-            Optional<? extends CopperPotRecipe> recipe = this.level.getRecipeManager().getRecipeFor(this.recipeType, inventoryWrapper, this.level);
-            if (recipe.isPresent()) {
-               ResourceLocation newRecipeID = (recipe.get()).getId();
-               if (this.lastRecipeID != null && !this.lastRecipeID.equals(newRecipeID)) {
+         if ( this.checkNewRecipe ) {
+            Optional<? extends CopperPotRecipe> recipe = getAllRecipesFor(inventoryWrapper, this.level);
+            if ( recipe.isPresent() ) {
+               ResourceLocation newRecipeID = ( recipe.get() ).getId();
+               if ( this.lastRecipeID != null && !this.lastRecipeID.equals(newRecipeID) ) {
                   this.cookTime = 0;
                }
 
@@ -369,8 +397,8 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
    }
 
    private boolean hasInput() {
-      for(int i = 0; i < 2; ++i) {
-         if (!this.inventory.getStackInSlot(i).isEmpty()) {
+      for ( int i = 0; i < 2; ++i ) {
+         if ( !this.inventory.getStackInSlot(i).isEmpty() ) {
             return true;
          }
       }
@@ -378,61 +406,70 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       return false;
    }
 
-   protected boolean canCook(@Nullable Recipe<RecipeWrapper> recipe) {
-      if (this.hasInput() && recipe != null) {
+   protected boolean canCook( @Nullable Recipe<RecipeWrapper> recipe ) {
+      if ( this.hasInput() && recipe != null ) {
          ItemStack recipeOutput = recipe.getResultItem(this.level.registryAccess());
-         if (recipeOutput.isEmpty()) {
+         if ( recipeOutput.isEmpty() ) {
             return false;
-         } else {
+         }
+         else {
             ItemStack currentOutput = this.inventory.getStackInSlot(3);
-            if (currentOutput.isEmpty()) {
+            if ( currentOutput.isEmpty() ) {
                return true;
-            } else if (!currentOutput.is(recipeOutput.getItem())) {
+            }
+            else if ( !currentOutput.is(recipeOutput.getItem()) ) {
                return false;
-            } else if (currentOutput.getCount() + recipeOutput.getCount() <= Math.min(16, this.inventory.getSlotLimit(3))) {
+            }
+            else if ( currentOutput.getCount() + recipeOutput.getCount() <= Math.min(16, this.inventory.getSlotLimit(3)) ) {
                return true;
-            } else {
+            }
+            else {
                return currentOutput.getCount() + recipeOutput.getCount() <= Math.min(16, recipeOutput.getMaxStackSize());
             }
          }
-      } else {
+      }
+      else {
          return false;
       }
    }
 
-   private boolean processCooking(CopperPotRecipe recipe, CopperPotBlockEntity cookingPot) {
-      if (this.level == null) {
+   private boolean processCooking( CopperPotRecipe recipe, CopperPotBlockEntity cookingPot ) {
+      if ( this.level == null ) {
          return false;
-      } else {
+      }
+      else {
          ++this.cookTime;
-         if ((this.cookTime % 30 == 0) && this.hasEffect()) {
+         if ( ( this.cookTime % 30 == 0 ) && this.hasEffect() ) {
             this.effectCloud(getLevel(), worldPosition);
          }
          this.cookTimeTotal = recipe.getCookTime();
-         if (this.cookTime < this.cookTimeTotal) {
+         if ( this.cookTime < this.cookTimeTotal ) {
             return false;
-         } else {
+         }
+         else {
             this.cookTime = 0;
             this.mealContainerStack = recipe.getOutputContainer();
             ItemStack resultStack = recipe.getResultItem(this.level.registryAccess());
             ItemStack storedMealStack = this.inventory.getStackInSlot(3);
-            if (storedMealStack.isEmpty()) {
+            if ( storedMealStack.isEmpty() ) {
                this.inventory.setStackInSlot(3, resultStack.copy());
-            } else if (ItemStack.isSameItem(storedMealStack, resultStack)) {
+            }
+            else if ( ItemStack.isSameItem(storedMealStack, resultStack) ) {
                storedMealStack.grow(resultStack.getCount());
             }
 
             cookingPot.setRecipeUsed(recipe);
 
-            for(int i = 0; i < 3; ++i) {
+            for ( int i = 0; i < 3; ++i ) {
                ItemStack slotStack = this.inventory.getStackInSlot(i);
-               if (slotStack.hasCraftingRemainingItem()) {
+               if ( slotStack.hasCraftingRemainingItem() ) {
                   this.ejectIngredientRemainder(slotStack.getCraftingRemainingItem());
-               } else if (INGREDIENT_REMAINDER_OVERRIDES.containsKey(slotStack.getItem())) {
-                  this.ejectIngredientRemainder(((Item)INGREDIENT_REMAINDER_OVERRIDES.get(slotStack.getItem())).getDefaultInstance());
+               }
+               else if ( INGREDIENT_REMAINDER_OVERRIDES.containsKey(slotStack.getItem()) ) {
+                  this.ejectIngredientRemainder(( (Item) INGREDIENT_REMAINDER_OVERRIDES.get(slotStack.getItem()) ).getDefaultInstance());
                }
 
-               if (!slotStack.isEmpty()) {
+               if ( !slotStack.isEmpty() ) {
                   slotStack.shrink(1);
                }
             }
@@ -442,16 +479,16 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       }
    }
 
-   protected void ejectIngredientRemainder(ItemStack remainderStack) {
-      Direction direction = ((Direction)this.getBlockState().getValue(CopperPotBlock.FACING)).getCounterClockWise();
-      double x = (double)this.worldPosition.getX() + 0.5 + (double)direction.getStepX() * 0.25;
-      double y = (double)this.worldPosition.getY() + 0.7;
-      double z = (double)this.worldPosition.getZ() + 0.5 + (double)direction.getStepZ() * 0.25;
-      ItemUtils.spawnItemEntity(this.level, remainderStack, x, y, z, (double)((float)direction.getStepX() * 0.08F), 0.25, (double)((float)direction.getStepZ() * 0.08F));
+   protected void ejectIngredientRemainder( ItemStack remainderStack ) {
+      Direction direction = ( (Direction) this.getBlockState().getValue(CopperPotBlock.FACING) ).getCounterClockWise();
+      double x = (double) this.worldPosition.getX() + 0.5 + (double) direction.getStepX() * 0.25;
+      double y = (double) this.worldPosition.getY() + 0.7;
+      double z = (double) this.worldPosition.getZ() + 0.5 + (double) direction.getStepZ() * 0.25;
+      ItemUtils.spawnItemEntity(this.level, remainderStack, x, y, z, (double) ( (float) direction.getStepX() * 0.08F ), 0.25, (double) ( (float) direction.getStepZ() * 0.08F ));
    }
 
-   public void setRecipeUsed(@Nullable Recipe<?> recipe) {
-      if (recipe != null) {
+   public void setRecipeUsed( @Nullable Recipe<?> recipe ) {
+      if ( recipe != null ) {
          ResourceLocation recipeID = recipe.getId();
          this.usedRecipeTracker.addTo(recipeID, 1);
       }
@@ -463,31 +500,31 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       return null;
    }
 
-   public void awardUsedRecipes( Player player, List<ItemStack> items) {
+   public void awardUsedRecipes( Player player, List<ItemStack> items ) {
       List<Recipe<?>> usedRecipes = this.getUsedRecipesAndPopExperience(player.level(), player.position());
       player.awardRecipes(usedRecipes);
       this.usedRecipeTracker.clear();
    }
 
-   public List<Recipe<?>> getUsedRecipesAndPopExperience(Level level, Vec3 pos) {
+   public List<Recipe<?>> getUsedRecipesAndPopExperience( Level level, Vec3 pos ) {
       List<Recipe<?>> list = Lists.newArrayList();
       ObjectIterator var4 = this.usedRecipeTracker.object2IntEntrySet().iterator();
 
-      while(var4.hasNext()) {
-         Object2IntMap.Entry<ResourceLocation> entry = (Object2IntMap.Entry)var4.next();
-         level.getRecipeManager().byKey((ResourceLocation)entry.getKey()).ifPresent((recipe) -> {
+      while ( var4.hasNext() ) {
+         Object2IntMap.Entry<ResourceLocation> entry = (Object2IntMap.Entry) var4.next();
+         getAllRecipes().stream().filter(aef -> aef.getId() ==  entry.getKey()).findFirst().ifPresent(( recipe ) -> {
             list.add(recipe);
-            splitAndSpawnExperience((ServerLevel)level, pos, entry.getIntValue(), ((CopperPotRecipe)recipe).getExperience());
+            splitAndSpawnExperience((ServerLevel) level, pos, entry.getIntValue(), ( (CopperPotRecipe) recipe ).getExperience());
          });
       }
 
       return list;
    }
 
-   private static void splitAndSpawnExperience(ServerLevel level, Vec3 pos, int craftedAmount, float experience) {
-      int expTotal = Mth.floor((float)craftedAmount * experience);
-      float expFraction = Mth.frac((float)craftedAmount * experience);
-      if (expFraction != 0.0F && Math.random() < (double)expFraction) {
+   private static void splitAndSpawnExperience( ServerLevel level, Vec3 pos, int craftedAmount, float experience ) {
+      int expTotal = Mth.floor((float) craftedAmount * experience);
+      float expFraction = Mth.frac((float) craftedAmount * experience);
+      if ( expFraction != 0.0F && Math.random() < (double) expFraction ) {
          ++expTotal;
       }
 
@@ -509,8 +546,8 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
    public NonNullList<ItemStack> getDroppableInventory() {
       NonNullList<ItemStack> drops = NonNullList.create();
 
-      for(int i = 0; i < 6; ++i) {
-         if (i != 3) {
+      for ( int i = 0; i < 6; ++i ) {
+         if ( i != 3 ) {
             drops.add(this.inventory.getStackInSlot(i));
          }
       }
@@ -522,9 +559,10 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       ItemStack mealStack = this.inventory.getStackInSlot(3);
       ItemStack outputStack = this.inventory.getStackInSlot(5);
       int mealCount = Math.min(mealStack.getCount(), mealStack.getMaxStackSize() - outputStack.getCount());
-      if (outputStack.isEmpty()) {
+      if ( outputStack.isEmpty() ) {
          this.inventory.setStackInSlot(5, mealStack.split(mealCount));
-      } else if (outputStack.getItem() == mealStack.getItem()) {
+      }
+      else if ( outputStack.getItem() == mealStack.getItem() ) {
          mealStack.shrink(mealCount);
          outputStack.grow(mealCount);
       }
@@ -535,13 +573,14 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       ItemStack mealStack = this.inventory.getStackInSlot(3);
       ItemStack containerInputStack = this.inventory.getStackInSlot(4);
       ItemStack outputStack = this.inventory.getStackInSlot(5);
-      if (this.isContainerValid(containerInputStack) && outputStack.getCount() < outputStack.getMaxStackSize()) {
+      if ( this.isContainerValid(containerInputStack) && outputStack.getCount() < outputStack.getMaxStackSize() ) {
          int smallerStackCount = Math.min(mealStack.getCount(), containerInputStack.getCount());
          int mealCount = Math.min(smallerStackCount, mealStack.getMaxStackSize() - outputStack.getCount());
-         if (outputStack.isEmpty()) {
+         if ( outputStack.isEmpty() ) {
             containerInputStack.shrink(mealCount);
             this.inventory.setStackInSlot(5, mealStack.split(mealCount));
-         } else if (outputStack.getItem() == mealStack.getItem()) {
+         }
+         else if ( outputStack.getItem() == mealStack.getItem() ) {
             mealStack.shrink(mealCount);
             containerInputStack.shrink(mealCount);
             outputStack.grow(mealCount);
@@ -550,29 +589,31 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
 
    }
 
-   public ItemStack useHeldItemOnMeal(ItemStack container) {
-      if (this.isContainerValid(container) && !this.getMeal().isEmpty()) {
+   public ItemStack useHeldItemOnMeal( ItemStack container ) {
+      if ( this.isContainerValid(container) && !this.getMeal().isEmpty() ) {
          container.shrink(1);
          return this.getMeal().split(1);
-      } else {
+      }
+      else {
          return ItemStack.EMPTY;
       }
    }
 
-   private boolean doesMealHaveContainer(ItemStack meal) {
+   private boolean doesMealHaveContainer( ItemStack meal ) {
       return !this.mealContainerStack.isEmpty() || meal.hasCraftingRemainingItem();
    }
 
-   public boolean isContainerValid(ItemStack containerItem) {
-      if (containerItem.isEmpty()) {
+   public boolean isContainerValid( ItemStack containerItem ) {
+      if ( containerItem.isEmpty() ) {
          return false;
-      } else {
+      }
+      else {
          return !this.mealContainerStack.isEmpty() ? ItemStack.isSameItem(this.mealContainerStack, containerItem) : ItemStack.isSameItem(this.getMeal(), containerItem);
       }
    }
 
    public Component getName() {
-      return (Component)(this.customName != null ? this.customName : Component.translatable("copperpot.container.copper_pot"));
+      return (Component) ( this.customName != null ? this.customName : Component.translatable("copperpot.container.copper_pot") );
    }
 
    public Component getDisplayName() {
@@ -584,19 +625,20 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
       return this.customName;
    }
 
-   public void setCustomName(Component name) {
+   public void setCustomName( Component name ) {
       this.customName = name;
    }
 
-   public AbstractContainerMenu createMenu( int id, Inventory player, Player entity) {
+   public AbstractContainerMenu createMenu( int id, Inventory player, Player entity ) {
       return new CopperPotMenu(id, player, this, this.copperPotMenu);
    }
 
    @Nonnull
-   public <T> LazyOptional<T> getCapability( Capability<T> cap, @Nullable Direction side) {
-      if (cap.equals(ForgeCapabilities.ITEM_HANDLER)) {
+   public <T> LazyOptional<T> getCapability( Capability<T> cap, @Nullable Direction side ) {
+      if ( cap.equals(ForgeCapabilities.ITEM_HANDLER) ) {
          return side != null && !side.equals(Direction.UP) ? this.outputHandler.cast() : this.inputHandler.cast();
-      } else {
+      }
+      else {
          return super.getCapability(cap, side);
       }
    }
@@ -613,8 +655,8 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
 
    private ItemStackHandler createHandler() {
       return new ItemStackHandler(6) {
-         protected void onContentsChanged(int slot) {
-            if (slot >= 0 && slot < 3) {
+         protected void onContentsChanged( int slot ) {
+            if ( slot >= 0 && slot < 3 ) {
                checkNewRecipe = true;
             }
 
@@ -625,11 +667,11 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
 
    private ContainerData createIntArray() {
       return new ContainerData() {
-         public int get(int index) {
+         public int get( int index ) {
             int var10000;
-            switch (index) {
+            switch ( index ) {
                case 0:
-                  var10000 =cookTime;
+                  var10000 = cookTime;
                   break;
                case 1:
                   var10000 = cookTimeTotal;
@@ -641,8 +683,8 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
             return var10000;
          }
 
-         public void set(int index, int value) {
-            switch (index) {
+         public void set( int index, int value ) {
+            switch ( index ) {
                case 0:
                   cookTime = value;
                   break;

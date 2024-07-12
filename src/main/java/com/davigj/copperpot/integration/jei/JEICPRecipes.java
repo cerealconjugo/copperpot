@@ -34,7 +34,6 @@ public class JEICPRecipes {
 
       List<CopperPotRecipe> copperPot = recipeManager.getAllRecipesFor(CPRecipeTypes.COPPER_POT.get()).stream().toList();
       List<ItemStack> results = copperPot.stream().map(( e)->e.getResultItem(null)).toList();
-      List<NonNullList<Ingredient>> ingredients = copperPot.stream().map(( e)->e.getIngredients()).toList();
 
       List<CopperPotRecipe> cookingPot = recipeManager.getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
               .filter(recipe->recipe.getIngredients().size()<4)
