@@ -1,0 +1,23 @@
+{
+  "variants": {
+    "facing=north,bites=0": { "model": "copperpot:block/baked_alaska_block" },
+    "facing=north,bites=1": { "model": "copperpot:block/baked_alaska_block_slice1" },
+    "facing=north,bites=2": { "model": "copperpot:block/baked_alaska_block_slice2" },
+    "facing=north,bites=3": { "model": "copperpot:block/baked_alaska_block_slice3" },
+
+    "facing=east,bites=0": { "model": "copperpot:block/baked_alaska_block", "y": 90 },
+    "facing=east,bites=1": { "model": "copperpot:block/baked_alaska_block_slice1", "y": 90 },
+    "facing=east,bites=2": { "model": "copperpot:block/baked_alaska_block_slice2", "y": 90 },
+    "facing=east,bites=3": { "model": "copperpot:block/baked_alaska_block_slice3", "y": 90 },
+
+    "facing=south,bites=0": { "model": "copperpot:block/baked_alaska_block", "y": 180 },
+    "facing=south,bites=1": { "model": "copperpot:block/baked_alaska_block_slice1", "y": 180 },
+    "facing=south,bites=2": { "model": "copperpot:block/baked_alaska_block_slice2", "y": 180 },
+    "facing=south,bites=3": { "model": "copperpot:block/baked_alaska_block_slice3", "y": 180 },
+
+    "facing=west,bites=0": { "model": "copperpot:block/baked_alaska_block", "y": 270 },
+    "facing=west,bites=1": { "model": "copperpot:block/baked_alaska_block_slice1", "y": 270 },
+    "facing=west,bites=2": { "model": "copperpot:block/baked_alaska_block_slice2", "y": 270 },
+    "facing=west,bites=3": { "model": "copperpot:block/baked_alaska_block_slice3", "y": 270 }
+  }
+}

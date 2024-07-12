@@ -1,0 +1,24 @@
+{
+  "type": "copperpot:cooking",
+  "ingredients": [
+    {
+      "tag": "forge:crops/tomato"
+    },
+    {
+      "tag": "forge:crops/tomato"
+    }
+  ],
+  "result": {
+    "item": "farmersdelight:tomato_sauce",
+    "count": 2
+  },
+  "container": {
+    "item": "minecraft:bowl"
+  },
+  "effect": {
+    "type":"minecraft:poison",
+    "duration": 200
+  },
+  "cookingtime": 100,
+  "experience": 0.35
+}

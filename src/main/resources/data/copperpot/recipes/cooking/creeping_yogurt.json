@@ -1,0 +1,31 @@
+{
+  "type": "copperpot:cooking",
+  "ingredients": [
+    {
+      "tag": "forge:milk"
+    },
+    {
+      "tag": "forge:milk"
+    },
+    {
+      "item": "savageandravage:creeper_spores"
+    }
+  ],
+  "result": {
+    "item": "copperpot:creeping_yogurt"
+  },
+  "container": {
+    "item": "minecraft:bowl"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "savageandravage"
+    }
+  ],
+  "effect": {
+    "type":"savageandravage:weight",
+    "duration": 60,
+    "amplifier": 2
+  }
+}

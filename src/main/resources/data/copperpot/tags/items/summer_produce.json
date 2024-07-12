@@ -1,0 +1,14 @@
+{
+  "replace": false,
+  "values": [
+    "farmersdelight:onion",
+    "minecraft:melon_slice",
+    "minecraft:sunflower"
+  ],
+  "optional": [
+    "abundance:lavender",
+    "neapolitan:mint_leaves",
+    "upgrade_aquatic:mulberry",
+    "atmospheric:passionfruit"
+  ]
+}

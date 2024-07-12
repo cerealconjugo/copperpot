@@ -1,0 +1,20 @@
+{
+  "type": "copperpot:cooking",
+  "ingredients": [
+    {
+      "tag": "copperpot:winter_produce"
+    },
+    {
+      "item": "minecraft:snowball"
+    },
+    {
+      "item": "minecraft:kelp"
+    }
+  ],
+  "result": {
+    "item": "copperpot:brumal_agar"
+  },
+  "effect": {
+    "type": "minecraft:fire_resistance"
+  }
+}

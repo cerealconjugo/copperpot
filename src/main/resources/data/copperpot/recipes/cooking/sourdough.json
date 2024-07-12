@@ -1,0 +1,28 @@
+{
+  "type": "copperpot:cooking",
+  "ingredients": [
+    {
+      "item": "farmersdelight:wheat_dough"
+    },
+    {
+      "tag": "forge:milk"
+    },
+    {
+      "item": "savageandravage:creeper_spores"
+    }
+  ],
+  "result": {
+    "item": "copperpot:sourdough"
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "savageandravage"
+    }
+  ],
+  "cookingtime": 200,
+  "effect": {
+        "type": "minecraft:poison",
+        "amplifier": 1
+    }
+}

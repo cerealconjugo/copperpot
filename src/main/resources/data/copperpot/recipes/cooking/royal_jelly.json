@@ -1,0 +1,28 @@
+{
+  "type": "copperpot:cooking",
+  "ingredients": [
+    {
+      "item": "minecraft:honeycomb"
+    },
+    {
+      "item": "minecraft:honey_bottle"
+    },
+    {
+      "item": "buzzier_bees:buttercup"
+    }
+  ],
+  "result": {
+    "item": "copperpot:royal_jelly",
+    "count": 2
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "buzzier_bees"
+    }
+  ],
+  "cookingtime": 600,
+  "effect": {
+    "type":"buzzier_bees:sunny"
+  }
+}

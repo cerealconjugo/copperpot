@@ -1,0 +1,10 @@
+{
+  "replace": false,
+  "values": [  ],
+  "optional": [
+    "copperpot:pork_sandwich",
+    "copperpot:sourdough",
+    "copperpot:carrot_cupcake",
+    "copperpot:mooncake"
+  ]
+}

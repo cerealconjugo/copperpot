@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [  ],
+  "optional": [
+    "copperpot:meringue",
+    "copperpot:raw_meringue",
+    "copperpot:pork_sandwich",
+    "copperpot:creeping_yogurt",
+    "copperpot:guardian_souffle"
+  ]
+}

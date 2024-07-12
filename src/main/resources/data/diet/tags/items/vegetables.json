@@ -1,0 +1,13 @@
+{
+  "replace": false,
+  "values": [  ],
+  "optional": [
+    "copperpot:autumnal_agar",
+    "copperpot:vernal_agar",
+    "copperpot:brumal_agar",
+    "copperpot:aestival_agar",
+    "copperpot:pork_sandwich",
+    "copperpot:mooncake",
+    "copperpot:carrot_cupcake"
+  ]
+}

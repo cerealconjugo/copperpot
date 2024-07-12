@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "   ",
+    "bSb",
+    "ccc"
+  ],
+  "key": {
+    "c": {
+      "tag": "forge:ingots/copper"
+    },
+    "S": {
+      "item": "minecraft:stone_shovel"
+    },
+    "b": {
+      "item": "minecraft:brick"
+    }
+  },
+  "result": {
+    "item": "copperpot:copper_pot"
+  }
+}

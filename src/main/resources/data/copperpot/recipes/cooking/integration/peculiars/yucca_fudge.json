@@ -1,0 +1,36 @@
+{
+  "type": "copperpot:cooking",
+  "ingredients": [
+    {
+      "item": "atmospheric:yucca_fruit"
+    },
+    {
+      "item": "atmospheric:yucca_fruit"
+    },
+    {
+      "item": "neapolitan:chocolate_bar"
+    }
+  ],
+  "result": {
+    "item": "peculiars:yucca_fudge",
+    "count": 3
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "peculiars"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "neapolitan"
+    },
+    {
+      "type": "forge:mod_loaded",
+      "modid": "atmospheric"
+    }
+  ],
+  "effect": {
+    "type":"atmospheric:persistence",
+    "duration": 100
+  }
+}

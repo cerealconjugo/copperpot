@@ -1,0 +1,47 @@
+modLoader = "javafml"
+loaderVersion = "[46,)"
+issueTrackerURL = "https://github.com/davidjjung/copperpot/issues"
+license = "MIT License"
+
+[[mods]]
+modId = "copperpot"
+version = "1.20.1-1.2.4"
+# updateJSONURL=""
+logoFile = "logo.png"
+logoBlur = false
+    credits = "DavigJ for some code, GracefulLion for gradle/recipes and playtesting, splet, and dannyk11. Additional thanks to Nary for spritework, and a big thanks to vectorwing for the Farmer's Delight mod to begin with! Thank you to OnesAndZer0s for the port to 1.20.1"
+authors = "DavigJ"
+displayName = "Copper Pot"
+description = '''
+An unofficial add-on for Farmer's Delight! Adds a copper pot for those stuck waiting on the iron age.
+    '''
+itemIcon = "copperpot:copper_pot_block"
+configBackground = "minecraft:textures/block/bricks.png"
+
+[[dependencies.copperpot]]
+modId = "forge"
+mandatory = true
+versionRange = "[47.1.0,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.copperpot]]
+modId = "minecraft"
+mandatory = true
+versionRange = "[1.20,)"
+ordering = "NONE"
+side = "BOTH"
+
+[[dependencies.copperpot]]
+    modId = "blueprint"
+    mandatory = true
+    versionRange = "[7.1.0,)"
+    ordering = "AFTER"
+    side = "BOTH"
+
+[[dependencies.copperpot]]
+modId = "crafttweaker"
+mandatory = false
+versionRange = "[14.0.6,)"
+ordering = "NONE"
+side = "BOTH"

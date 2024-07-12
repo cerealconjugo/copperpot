@@ -1,0 +1,23 @@
+{
+  "type": "copperpot:cooking",
+  "ingredients": [
+    {
+      "item": "minecraft:brown_mushroom"
+    },
+    {
+      "item": "minecraft:red_mushroom"
+    }
+  ],
+  "result": {
+    "item": "minecraft:mushroom_stew"
+  },
+  "container": {
+    "item": "minecraft:bowl"
+  },
+  "effect": {
+    "type":"minecraft:haste",
+    "duration": 60
+  },
+  "experience": 0.35,
+  "cookingtime": 100
+}

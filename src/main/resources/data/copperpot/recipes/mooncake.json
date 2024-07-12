@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "neapolitan:roasted_adzuki_beans"
+    },
+    {
+      "item": "minecraft:wheat"
+    },
+    {
+      "tag": "forge:eggs"
+    },
+    {
+      "tag": "copperpot:mooncake_toppings"
+    }
+  ],
+  "result": {
+    "item": "copperpot:mooncake",
+    "count": 2
+  },
+  "conditions": [
+    {
+      "type": "forge:mod_loaded",
+      "modid": "neapolitan"
+    }
+  ]
+}

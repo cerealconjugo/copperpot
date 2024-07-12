@@ -1,0 +1,16 @@
+{
+  "replace": false,
+  "values": [  ],
+  "optional": [
+    "copperpot:raw_meringue",
+    "copperpot:meringue",
+    "copperpot:mint_meringue",
+    "copperpot:maple_bacon_fudge",
+    "copperpot:baked_alaska_block",
+    "copperpot:baked_alaska_slice",
+    "copperpot:royal_jelly",
+    "copperpot:carrot_cupcake",
+    "copperpot:mooncake",
+    "copperpot:tropical_meringue"
+  ]
+}
