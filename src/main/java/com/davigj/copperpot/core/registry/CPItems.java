@@ -3,6 +3,7 @@ package com.davigj.copperpot.core.registry;
 import com.davigj.copperpot.CopperPot;
 import com.davigj.copperpot.CopperPotConfig;
 import com.davigj.copperpot.common.item.*;
+import com.davigj.copperpot.core.tags.CPMobEffectTags;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.food.FoodProperties;
@@ -29,17 +30,17 @@ public class CPItems {
    public static final RegistryObject<Item> MERINGUE = ITEMS.register("meringue", () -> new Item(
            new Item.Properties().food(Foods.MERINGUE)));
 
-   public static final RegistryObject<Item> AUTUMNAL_AGAR = ITEMS.register("autumnal_agar", () -> new SeasonalAgar(
-           new Item.Properties().food(Foods.AUTUMNAL_AGAR), CopperPotConfig.COMMON.autumnalExtensionFx));
+   public static final RegistryObject<Item> AUTUMNAL_AGAR = ITEMS.register("autumnal_agar", () -> new SeasonalAgarItem(
+           new Item.Properties().food(Foods.AUTUMNAL_AGAR), CPMobEffectTags.AUTUMNAL));
 
-   public static final RegistryObject<Item> AESTIVAL_AGAR = ITEMS.register("aestival_agar", () -> new SeasonalAgar(
-           new Item.Properties().food(Foods.AESTIVAL_AGAR), CopperPotConfig.COMMON.aestivalExtensionFx));
+   public static final RegistryObject<Item> AESTIVAL_AGAR = ITEMS.register("aestival_agar", () -> new SeasonalAgarItem(
+           new Item.Properties().food(Foods.AESTIVAL_AGAR), CPMobEffectTags.AESTIVAL));
 
-   public static final RegistryObject<Item> BRUMAL_AGAR = ITEMS.register("brumal_agar", () -> new SeasonalAgar(
-           new Item.Properties().food(Foods.BRUMAL_AGAR), CopperPotConfig.COMMON.brumalExtensionFx));
+   public static final RegistryObject<Item> BRUMAL_AGAR = ITEMS.register("brumal_agar", () -> new SeasonalAgarItem(
+           new Item.Properties().food(Foods.BRUMAL_AGAR), CPMobEffectTags.BRUMAL));
 
-   public static final RegistryObject<Item> VERNAL_AGAR = ITEMS.register("vernal_agar", () -> new SeasonalAgar(
-           new Item.Properties().food(Foods.VERNAL_AGAR), CopperPotConfig.COMMON.vernalExtensionFx));
+   public static final RegistryObject<Item> VERNAL_AGAR = ITEMS.register("vernal_agar", () -> new SeasonalAgarItem(
+           new Item.Properties().food(Foods.VERNAL_AGAR), CPMobEffectTags.VERNAL));
 
    public static final RegistryObject<Item> BAKED_ALASKA_BLOCK = ITEMS.register("baked_alaska_block", () -> new BlockItem(
            CPBlocks.BAKED_ALASKA_BLOCK.get(), new Item.Properties().stacksTo(1)));

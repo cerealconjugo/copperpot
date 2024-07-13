@@ -33,7 +33,8 @@ public class SeasonalAgar extends Item {
       if (!pLevel.isClientSide()) {
          extendEffect(pLivingEntity);
       }
-      return pStack;   }
+      return pStack;
+   }
 
    public void extendEffect(LivingEntity player) {
       Iterator<MobEffectInstance> effects = player.getActiveEffects().iterator();
@@ -56,11 +57,6 @@ public class SeasonalAgar extends Item {
    @Override
    @OnlyIn(Dist.CLIENT)
    public void appendHoverText( ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced ) {
-      MutableComponent tip = Component.translatable("copperpot.tooltip.mint_meringue.tip");
-      MutableComponent tip2 = Component.translatable("copperpot.tooltip.mint_meringue.tip2");
-      pTooltipComponents.add(tip.withStyle(ChatFormatting.BLUE));
-      pTooltipComponents.add(tip2.withStyle(ChatFormatting.BLUE));
-
       MutableComponent prefix = Component.translatable("copperpot.tooltip.seasonal_agar.prefix");
       pTooltipComponents.add(prefix.withStyle(ChatFormatting.BLUE));
       MutableComponent effectDescription;

@@ -1,6 +1,5 @@
 package com.davigj.copperpot;
 
-import com.davigj.copperpot.common.registry.*;
 import com.davigj.copperpot.core.registry.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
