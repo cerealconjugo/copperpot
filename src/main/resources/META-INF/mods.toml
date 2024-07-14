@@ -5,8 +5,7 @@ license = "MIT License"
 
 [[mods]]
 modId = "copperpot"
-version = "1.20.1-1.2.4"
-# updateJSONURL=""
+version = "${file.jarVersion}"
 logoFile = "logo.png"
 logoBlur = false
 credits = "HUGE thanks to OnesAndZer0s for the 1.20.1 port! Thanks to Nary for art, GracefulLion, splet, and dannyk11. And vectorwing since FD is cool"

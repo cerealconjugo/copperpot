@@ -42,7 +42,7 @@ public class SeasonalAgarItem extends Item {
         Collection<MobEffectInstance> effectList = player.getActiveEffects();
         for (MobEffectInstance inst: effectList) {
             ITag<MobEffect> tag = Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS.tags()).getTag(this.effects);
-            if (tag.contains(inst.getEffect()) && inst.isVisible() && inst.getDuration() > 10) {
+            if (tag.contains(inst.getEffect()) && inst.getDuration() > 10) {
                 MobEffectInstance extended = new MobEffectInstance(inst.getEffect(), inst.getDuration() + player.getRandom().nextInt(100) + 100, inst.getAmplifier());
                 player.addEffect(extended);
             }
