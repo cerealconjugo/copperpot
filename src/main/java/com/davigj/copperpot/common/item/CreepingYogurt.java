@@ -33,7 +33,7 @@ public class CreepingYogurt extends Item {
    @Override
    public ItemStack finishUsingItem( ItemStack pStack, Level pLevel, LivingEntity pLivingEntity ) {
       super.finishUsingItem(pStack, pLevel, pLivingEntity);
-      if (!pLevel.isClientSide()) {
+      if (!pLevel.isClientSide() && pLivingEntity instanceof Player) {
          // TODO: Check how slabfish_snacks works--does it emulate the slabfish actually *using* the item
          pewpew(pLivingEntity, pLevel);
       }
@@ -49,7 +49,7 @@ public class CreepingYogurt extends Item {
       return pStack;
    }
 
-   public void pewpew( LivingEntity player, Level worldIn) {
+   public void pewpew(LivingEntity player, Level worldIn) {
       BlockPos pos = player.blockPosition();
       Iterator<MobEffectInstance> effects = player.getActiveEffects().iterator();
       Direction direction = player.getDirection();

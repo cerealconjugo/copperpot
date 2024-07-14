@@ -66,637 +66,632 @@ import java.util.function.Supplier;
 
 
 public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvider, HeatableBlockEntity, Nameable, RecipeHolder {
-   public static final int MEAL_DISPLAY_SLOT = 3;
-   public static final int CONTAINER_SLOT = 4;
-   public static final int OUTPUT_SLOT = 5;
-   public static final int INVENTORY_SIZE = 6;
-   public static final Map<Item, Item> INGREDIENT_REMAINDER_OVERRIDES;
-   private final ItemStackHandler inventory;
-   private final LazyOptional<IItemHandler> inputHandler;
-   private final LazyOptional<IItemHandler> outputHandler;
-   private int cookTime;
-   private int cookTimeTotal;
-   private ItemStack mealContainerStack;
-   private Component customName;
-   protected final ContainerData copperPotMenu;
-   private final Object2IntOpenHashMap<ResourceLocation> usedRecipeTracker;
-   private ResourceLocation lastRecipeID;
-   private boolean checkNewRecipe;
-   private boolean hasEffect;
+    public static final int MEAL_DISPLAY_SLOT = 3;
+    public static final int CONTAINER_SLOT = 4;
+    public static final int OUTPUT_SLOT = 5;
+    public static final int INVENTORY_SIZE = 6;
+    public static final Map<Item, Item> INGREDIENT_REMAINDER_OVERRIDES;
+    private final ItemStackHandler inventory;
+    private final LazyOptional<IItemHandler> inputHandler;
+    private final LazyOptional<IItemHandler> outputHandler;
+    private int cookTime;
+    private int cookTimeTotal;
+    private ItemStack mealContainerStack;
+    private Component customName;
+    protected final ContainerData copperPotMenu;
+    private final Object2IntOpenHashMap<ResourceLocation> usedRecipeTracker;
+    private ResourceLocation lastRecipeID;
+    private boolean checkNewRecipe;
+    private boolean hasEffect;
 
-   protected final RecipeType<? extends CopperPotRecipe> recipeType;
+    protected final RecipeType<? extends CopperPotRecipe> recipeType;
 
-   public CopperPotBlockEntity( BlockPos pos, BlockState state ) {
-      super(CPBlockEntityTypes.COPPER_POT.get(), pos, state);
-      this.mealContainerStack = ItemStack.EMPTY;
-      this.copperPotMenu = this.createIntArray();
-      this.usedRecipeTracker = new Object2IntOpenHashMap();
-      this.checkNewRecipe = true;
-      this.recipeType = CPRecipeTypes.COPPER_POT.get();
-      this.inventory = createHandler();
+    public CopperPotBlockEntity(BlockPos pos, BlockState state) {
+        super(CPBlockEntityTypes.COPPER_POT.get(), pos, state);
+        this.mealContainerStack = ItemStack.EMPTY;
+        this.copperPotMenu = this.createIntArray();
+        this.usedRecipeTracker = new Object2IntOpenHashMap();
+        this.checkNewRecipe = true;
+        this.recipeType = CPRecipeTypes.COPPER_POT.get();
+        this.inventory = createHandler();
 
-      this.inputHandler = LazyOptional.of(() -> new CopperPotItemHandler(this.inventory, Direction.UP));
-      this.outputHandler = LazyOptional.of(() -> new CopperPotItemHandler(this.inventory, Direction.DOWN));
-   }
+        this.inputHandler = LazyOptional.of(() -> new CopperPotItemHandler(this.inventory, Direction.UP));
+        this.outputHandler = LazyOptional.of(() -> new CopperPotItemHandler(this.inventory, Direction.DOWN));
+    }
 
-   public static ItemStack getMealFromItem( ItemStack copperPotStack ) {
-      if ( !copperPotStack.is(CPItems.COPPER_POT.get()) ) {
-         return ItemStack.EMPTY;
-      }
-      else {
-         CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
-         if ( compound != null ) {
-            CompoundTag inventoryTag = compound.getCompound("Inventory");
-            if ( inventoryTag.contains("Items", 9) ) {
-               ItemStackHandler handler = new ItemStackHandler();
-               handler.deserializeNBT(inventoryTag);
-               return handler.getStackInSlot(3);
+    public static ItemStack getMealFromItem(ItemStack copperPotStack) {
+        if (!copperPotStack.is(CPItems.COPPER_POT.get())) {
+            return ItemStack.EMPTY;
+        } else {
+            CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
+            if (compound != null) {
+                CompoundTag inventoryTag = compound.getCompound("Inventory");
+                if (inventoryTag.contains("Items", 9)) {
+                    ItemStackHandler handler = new ItemStackHandler();
+                    handler.deserializeNBT(inventoryTag);
+                    return handler.getStackInSlot(3);
+                }
             }
-         }
 
-         return ItemStack.EMPTY;
-      }
-   }
+            return ItemStack.EMPTY;
+        }
+    }
 
-   public static void takeServingFromItem( ItemStack copperPotStack ) {
-      if ( copperPotStack.is(CPItems.COPPER_POT.get()) ) {
-         CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
-         if ( compound != null ) {
-            CompoundTag inventoryTag = compound.getCompound("Inventory");
-            if ( inventoryTag.contains("Items", 6) ) {
-               ItemStackHandler handler = new ItemStackHandler();
-               handler.deserializeNBT(inventoryTag);
-               ItemStack newMealStack = handler.getStackInSlot(3);
-               newMealStack.shrink(1);
-               compound.remove("Inventory");
-               compound.put("Inventory", handler.serializeNBT());
+    public static void takeServingFromItem(ItemStack copperPotStack) {
+        if (copperPotStack.is(CPItems.COPPER_POT.get())) {
+            CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
+            if (compound != null) {
+                CompoundTag inventoryTag = compound.getCompound("Inventory");
+                if (inventoryTag.contains("Items", 6)) {
+                    ItemStackHandler handler = new ItemStackHandler();
+                    handler.deserializeNBT(inventoryTag);
+                    ItemStack newMealStack = handler.getStackInSlot(3);
+                    newMealStack.shrink(1);
+                    compound.remove("Inventory");
+                    compound.put("Inventory", handler.serializeNBT());
+                }
             }
-         }
 
-      }
-   }
+        }
+    }
 
-   public static ItemStack getContainerFromItem( ItemStack copperPotStack ) {
-      if ( !copperPotStack.is(CPItems.COPPER_POT.get()) ) {
-         return ItemStack.EMPTY;
-      }
-      else {
-         CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
-         return compound != null ? ItemStack.of(compound.getCompound("Container")) : ItemStack.EMPTY;
-      }
-   }
+    public static ItemStack getContainerFromItem(ItemStack copperPotStack) {
+        if (!copperPotStack.is(CPItems.COPPER_POT.get())) {
+            return ItemStack.EMPTY;
+        } else {
+            CompoundTag compound = copperPotStack.getTagElement("BlockEntityTag");
+            return compound != null ? ItemStack.of(compound.getCompound("Container")) : ItemStack.EMPTY;
+        }
+    }
 
-   public void load( CompoundTag compound ) {
-      super.load(compound);
-      this.inventory.deserializeNBT(compound.getCompound("Inventory"));
-      this.cookTime = compound.getInt("CookTime");
-      this.cookTimeTotal = compound.getInt("CookTimeTotal");
-      this.mealContainerStack = ItemStack.of(compound.getCompound("Container"));
-      if ( compound.contains("CustomName", 8) ) {
-         this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
-      }
-      this.hasEffect = compound.getBoolean("HasEffect");
+    public void load(CompoundTag compound) {
+        super.load(compound);
+        this.inventory.deserializeNBT(compound.getCompound("Inventory"));
+        this.cookTime = compound.getInt("CookTime");
+        this.cookTimeTotal = compound.getInt("CookTimeTotal");
+        this.mealContainerStack = ItemStack.of(compound.getCompound("Container"));
+        if (compound.contains("CustomName", 8)) {
+            this.customName = Component.Serializer.fromJson(compound.getString("CustomName"));
+        }
+        this.hasEffect = compound.getBoolean("HasEffect");
 
-      CompoundTag compoundRecipes = compound.getCompound("RecipesUsed");
-      Iterator var3 = compoundRecipes.getAllKeys().iterator();
+        CompoundTag compoundRecipes = compound.getCompound("RecipesUsed");
+        Iterator var3 = compoundRecipes.getAllKeys().iterator();
 
-      while ( var3.hasNext() ) {
-         String key = (String) var3.next();
-         this.usedRecipeTracker.put(new ResourceLocation(key), compoundRecipes.getInt(key));
-      }
+        while (var3.hasNext()) {
+            String key = (String) var3.next();
+            this.usedRecipeTracker.put(new ResourceLocation(key), compoundRecipes.getInt(key));
+        }
 
-   }
+    }
 
-   public void saveAdditional( CompoundTag compound ) {
-      super.saveAdditional(compound);
-      compound.putInt("CookTime", this.cookTime);
-      compound.putInt("CookTimeTotal", this.cookTimeTotal);
-      compound.put("Container", this.mealContainerStack.serializeNBT());
-      if ( this.customName != null ) {
-         compound.putString("CustomName", Component.Serializer.toJson(this.customName));
-      }
-      compound.putBoolean("HasEffect", this.hasEffect);
-
-      compound.put("Inventory", this.inventory.serializeNBT());
-      CompoundTag compoundRecipes = new CompoundTag();
-      this.usedRecipeTracker.forEach(( recipeId, craftedAmount ) -> {
-         compoundRecipes.putInt(recipeId.toString(), craftedAmount);
-      });
-      compound.put("RecipesUsed", compoundRecipes);
-   }
-
-   private CompoundTag writeItems( CompoundTag compound ) {
-      super.saveAdditional(compound);
-      compound.put("Container", this.mealContainerStack.serializeNBT());
-      compound.put("Inventory", this.inventory.serializeNBT());
-      return compound;
-   }
-
-   public CompoundTag writeMeal( CompoundTag compound ) {
-      if ( this.getMeal().isEmpty() ) {
-         return compound;
-      }
-      else {
-         ItemStackHandler drops = new ItemStackHandler(6);
-
-         for ( int i = 0; i < 6; ++i ) {
-            drops.setStackInSlot(i, i == 3 ? this.inventory.getStackInSlot(i) : ItemStack.EMPTY);
-         }
-
-         if ( this.customName != null ) {
+    public void saveAdditional(CompoundTag compound) {
+        super.saveAdditional(compound);
+        compound.putInt("CookTime", this.cookTime);
+        compound.putInt("CookTimeTotal", this.cookTimeTotal);
+        compound.put("Container", this.mealContainerStack.serializeNBT());
+        if (this.customName != null) {
             compound.putString("CustomName", Component.Serializer.toJson(this.customName));
-         }
+        }
+        compound.putBoolean("HasEffect", this.hasEffect);
 
-         compound.put("Container", this.mealContainerStack.serializeNBT());
-         compound.put("Inventory", drops.serializeNBT());
-         return compound;
-      }
-   }
+        compound.put("Inventory", this.inventory.serializeNBT());
+        CompoundTag compoundRecipes = new CompoundTag();
+        this.usedRecipeTracker.forEach((recipeId, craftedAmount) -> {
+            compoundRecipes.putInt(recipeId.toString(), craftedAmount);
+        });
+        compound.put("RecipesUsed", compoundRecipes);
+    }
 
+    private CompoundTag writeItems(CompoundTag compound) {
+        super.saveAdditional(compound);
+        compound.put("Container", this.mealContainerStack.serializeNBT());
+        compound.put("Inventory", this.inventory.serializeNBT());
+        return compound;
+    }
 
-   private void effectCloud( Level worldIn, BlockPos pos ) {
-      AreaEffectCloud steam = new AreaEffectCloud(worldIn, pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D);
-      steam.setDuration(15);
-      steam.setRadius(0.1F);
-      String effect = this.getEffect();
-      int effectDuration = this.getEffectDuration();
-      int effectAmplifier = this.getEffectAmplifier();
-      String[] effectName = effect.split(":", 2);
-      MobEffectInstance effectInstance = new MobEffectInstance(getCookEffect(effectName[0], new ResourceLocation(effectName[0], effectName[1])).get(), effectDuration, effectAmplifier, false, true);
-      double radius = fumesRadius(worldIn, pos);
-      for ( LivingEntity living : steam.level().getEntitiesOfClass(LivingEntity.class, steam.getBoundingBox().inflate(radius, 2.0D, radius)) ) {
-         living.addEffect(effectInstance);
-      }
-      steam.addEffect(effectInstance);
-      worldIn.addFreshEntity(steam);
-   }
+    public CompoundTag writeMeal(CompoundTag compound) {
+        if (this.getMeal().isEmpty()) {
+            return compound;
+        } else {
+            ItemStackHandler drops = new ItemStackHandler(6);
 
-   private double fumesRadius( Level worldIn, BlockPos pos ) {
-      Iterator<BlockPos> var8 = BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 3, 1)).iterator();
-      double inhibited = CopperPotConfig.COMMON.copperFumeRadius.get();
-      while ( var8.hasNext() ) {
-         BlockPos neighborPos = var8.next();
-         BlockState neighborState = worldIn.getBlockState(neighborPos);
-         if ( neighborState.is(CPBlockTags.PARTIAL_FUME_INHIBITORS) ) {
-            inhibited = 1.0D;
-         }
-         if ( neighborState.is(CPBlockTags.FUME_INHIBITORS) ) {
-            return 0.0D;
-         }
-      }
-      return inhibited;
-   }
-
-   public static void cookingTick( Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot ) {
-      boolean isHeated = copperPot.isHeated(level, pos);
-      boolean didInventoryChange = false;
-      if ( isHeated && copperPot.hasInput() && state.getValue(CopperPotBlock.ENABLED) ) {
-         Optional<? extends CopperPotRecipe> recipe = copperPot.getMatchingRecipe(new RecipeWrapper(copperPot.inventory));
-         if ( recipe.isPresent() && copperPot.canCook(recipe.get()) ) {
-            didInventoryChange = copperPot.processCooking(recipe.get(), copperPot);
-         }
-         else {
-            copperPot.cookTime = 0;
-         }
-      }
-      else if ( copperPot.cookTime > 0 ) {
-         copperPot.cookTime = Mth.clamp(copperPot.cookTime - 2, 0, copperPot.cookTimeTotal);
-      }
-
-      ItemStack mealStack = copperPot.getMeal();
-      if ( !mealStack.isEmpty() ) {
-         if ( !copperPot.doesMealHaveContainer(mealStack) ) {
-            copperPot.moveMealToOutput();
-            didInventoryChange = true;
-         }
-         else if ( !copperPot.inventory.getStackInSlot(3).isEmpty() ) {
-            copperPot.useStoredContainersOnMeal();
-            didInventoryChange = true;
-         }
-      }
-
-      if ( didInventoryChange ) {
-         copperPot.inventoryChanged();
-      }
-
-   }
-
-
-   protected List<CopperPotRecipe> getAllRecipes() {
-      List<CopperPotRecipe> copperPot = this.level.getRecipeManager().getAllRecipesFor(CPRecipeTypes.COPPER_POT.get()).stream().toList();
-      List<ItemStack> results = copperPot.stream().map(( e ) -> e.getResultItem(null)).toList();
-
-      List<CopperPotRecipe> cookingPot = this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
-              .filter(recipe -> recipe.getIngredients().size() < 4)
-              .filter(recipe -> results.stream().noneMatch(( e ) -> e.is(recipe.getResultItem(null).getItem())))
-              .map(CopperPotRecipe::fromRecipe)
-              .toList();
-
-      return List.of(copperPot, cookingPot).stream().flatMap(List::stream).toList();
-   }
-
-   private static Supplier<MobEffect> getCookEffect( String modid, ResourceLocation effect ) {
-      return ( ModList.get().isLoaded(modid) ? () -> ForgeRegistries.MOB_EFFECTS.getValue(effect) : () -> null );
-   }
-
-   private Optional<CopperPotRecipe> getAllRecipesFor( RecipeWrapper pInventory, Level pLevel ) {
-      return getAllRecipes().stream().filter(( p_220266_ ) -> {
-         return p_220266_.matches(pInventory, pLevel);
-      }).findFirst();
-   }
-
-   protected ItemStack getRecipeContainer() {
-      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getOutputContainer).orElse(ItemStack.EMPTY);
-   }
-
-   public boolean hasEffect() {
-      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::hasEffect).orElse(false);
-   }
-
-   public String getEffect() {
-      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffect).orElse("");
-   }
-
-   public int getEffectDuration() {
-      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectDuration).orElse(100);
-   }
-
-   public int getEffectAmplifier() {
-      return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectAmplifier).orElse(0);
-   }
-
-   public static void animationTick( Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot ) {
-      if ( copperPot.isHeated(level, pos) ) {
-         RandomSource random = level.random;
-         double x;
-         double y;
-         double z;
-         if ( random.nextFloat() < 0.07F ) {
-            x = (double) pos.getX() + 0.5D + ( random.nextDouble() * 0.6D - 0.3D );
-            y = (double) pos.getY() + 0.4D;
-            z = (double) pos.getZ() + 0.5D + ( random.nextDouble() * 0.6D - 0.3D );
-            // pick your particles, come pick yourself some particles
-            level.addParticle(ParticleTypes.CRIT, x, y, z, 0.0D, 0.0D, 0.0D);
-         }
-
-         if ( random.nextFloat() < 0.03F ) {
-            x = (double) pos.getX() + 0.5D + ( random.nextDouble() * 0.4D - 0.2D );
-            y = (double) pos.getY() + 0.4D;
-            z = (double) pos.getZ() + 0.5D + ( random.nextDouble() * 0.4D - 0.2D );
-            level.addParticle(ParticleTypes.EFFECT, x, y, z, 0.0D, 0.0D, 0.0D);
-         }
-
-      }
-
-   }
-
-   private Optional<? extends CopperPotRecipe> getMatchingRecipe( RecipeWrapper inventoryWrapper ) {
-      if ( this.level == null ) {
-         return Optional.empty();
-      }
-      else {
-         if ( lastRecipeID != null ) {
-            // get recipe by id
-            Optional<? extends Recipe<?>> recipe = getAllRecipes().stream().filter(aef -> aef.getId() == lastRecipeID).findFirst();
-            if ( recipe.isPresent() )
-               if ( recipe.get() instanceof CopperPotRecipe copPot ) {
-                  if ( copPot.matches(inventoryWrapper, level) ) {
-                     return Optional.of(copPot);
-                  }
-                  if ( ItemStack.isSameItem(copPot.getResultItem(this.level.registryAccess()), getMeal()) ) {
-                     return Optional.empty();
-                  }
-               }
-         }
-
-         if ( this.checkNewRecipe ) {
-            Optional<? extends CopperPotRecipe> recipe = getAllRecipesFor(inventoryWrapper, this.level);
-            if ( recipe.isPresent() ) {
-               ResourceLocation newRecipeID = ( recipe.get() ).getId();
-               if ( this.lastRecipeID != null && !this.lastRecipeID.equals(newRecipeID) ) {
-                  this.cookTime = 0;
-               }
-
-               this.lastRecipeID = newRecipeID;
-               return recipe;
+            for (int i = 0; i < 6; ++i) {
+                drops.setStackInSlot(i, i == 3 ? this.inventory.getStackInSlot(i) : ItemStack.EMPTY);
             }
-         }
 
-         this.checkNewRecipe = false;
-         return Optional.empty();
-      }
-   }
+            if (this.customName != null) {
+                compound.putString("CustomName", Component.Serializer.toJson(this.customName));
+            }
 
-   public ItemStack getContainer() {
-      ItemStack mealStack = this.getMeal();
-      return !mealStack.isEmpty() && !this.mealContainerStack.isEmpty() ? this.mealContainerStack : mealStack.getCraftingRemainingItem();
-   }
+            compound.put("Container", this.mealContainerStack.serializeNBT());
+            compound.put("Inventory", drops.serializeNBT());
+            return compound;
+        }
+    }
 
-   private boolean hasInput() {
-      for ( int i = 0; i < 2; ++i ) {
-         if ( !this.inventory.getStackInSlot(i).isEmpty() ) {
-            return true;
-         }
-      }
 
-      return false;
-   }
+    private void effectCloud(Level worldIn, BlockPos pos) {
+        AreaEffectCloud steam = createSteamCloud(worldIn, pos);
+        String effect = this.getEffect();
 
-   protected boolean canCook( @Nullable Recipe<RecipeWrapper> recipe ) {
-      if ( this.hasInput() && recipe != null ) {
-         ItemStack recipeOutput = recipe.getResultItem(this.level.registryAccess());
-         if ( recipeOutput.isEmpty() ) {
+        if (effect != null) {
+            MobEffectInstance effectInstance = createEffectInstance(effect);
+            applyEffectToEntities(worldIn, steam, effectInstance);
+            steam.addEffect(effectInstance);
+            worldIn.addFreshEntity(steam);
+        }
+    }
+
+    private AreaEffectCloud createSteamCloud(Level worldIn, BlockPos pos) {
+        AreaEffectCloud steam = new AreaEffectCloud(worldIn, pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D);
+        steam.setDuration(15);
+        steam.setRadius(0.1F);
+        return steam;
+    }
+
+    private MobEffectInstance createEffectInstance(String effect) {
+        String[] effectName = effect.split(":", 2);
+        int effectDuration = this.getEffectDuration();
+        int effectAmplifier = this.getEffectAmplifier();
+        return new MobEffectInstance(getCookEffect(effectName[0], new ResourceLocation(effectName[0], effectName[1])).get(), effectDuration, effectAmplifier, false, true);
+    }
+
+    private void applyEffectToEntities(Level worldIn, AreaEffectCloud steam, MobEffectInstance effectInstance) {
+        double radius = fumesRadius(worldIn, steam.blockPosition());
+        for (LivingEntity living : steam.level().getEntitiesOfClass(LivingEntity.class, steam.getBoundingBox().inflate(radius, 2.0D, radius))) {
+            living.addEffect(effectInstance);
+        }
+    }
+
+    private double fumesRadius(Level worldIn, BlockPos pos) {
+        Iterator<BlockPos> var8 = BlockPos.betweenClosed(pos.offset(-1, -1, -1), pos.offset(1, 3, 1)).iterator();
+        double inhibited = CopperPotConfig.COMMON.copperFumeRadius.get();
+        while (var8.hasNext()) {
+            BlockPos neighborPos = var8.next();
+            BlockState neighborState = worldIn.getBlockState(neighborPos);
+            if (neighborState.is(CPBlockTags.PARTIAL_FUME_INHIBITORS)) {
+                inhibited = 1.0D;
+            }
+            if (neighborState.is(CPBlockTags.FUME_INHIBITORS)) {
+                return 0.0D;
+            }
+        }
+        return inhibited;
+    }
+
+    public static void cookingTick(Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot) {
+        boolean isHeated = copperPot.isHeated(level, pos);
+        boolean didInventoryChange = false;
+        if (isHeated && copperPot.hasInput() && state.getValue(CopperPotBlock.ENABLED)) {
+            Optional<? extends CopperPotRecipe> recipe = copperPot.getMatchingRecipe(new RecipeWrapper(copperPot.inventory));
+            if (recipe.isPresent() && copperPot.canCook(recipe.get())) {
+                didInventoryChange = copperPot.processCooking(recipe.get(), copperPot);
+            } else {
+                copperPot.cookTime = 0;
+            }
+        } else if (copperPot.cookTime > 0) {
+            copperPot.cookTime = Mth.clamp(copperPot.cookTime - 2, 0, copperPot.cookTimeTotal);
+        }
+
+        ItemStack mealStack = copperPot.getMeal();
+        if (!mealStack.isEmpty()) {
+            if (!copperPot.doesMealHaveContainer(mealStack)) {
+                copperPot.moveMealToOutput();
+                didInventoryChange = true;
+            } else if (!copperPot.inventory.getStackInSlot(3).isEmpty()) {
+                copperPot.useStoredContainersOnMeal();
+                didInventoryChange = true;
+            }
+        }
+
+        if (didInventoryChange) {
+            copperPot.inventoryChanged();
+        }
+
+    }
+
+
+    protected List<CopperPotRecipe> getAllRecipes() {
+        List<CopperPotRecipe> copperPot = this.level.getRecipeManager().getAllRecipesFor(CPRecipeTypes.COPPER_POT.get()).stream().toList();
+        List<ItemStack> results = copperPot.stream().map((e) -> e.getResultItem(null)).toList();
+
+        List<CopperPotRecipe> cookingPot = this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
+                .filter(recipe -> recipe.getIngredients().size() < 4)
+                .filter(recipe -> results.stream().noneMatch((e) -> e.is(recipe.getResultItem(null).getItem())))
+                .map(CopperPotRecipe::fromRecipe)
+                .toList();
+
+        return List.of(copperPot, cookingPot).stream().flatMap(List::stream).toList();
+    }
+
+    private static Supplier<MobEffect> getCookEffect(String modid, ResourceLocation effect) {
+        return (ModList.get().isLoaded(modid) ? () -> ForgeRegistries.MOB_EFFECTS.getValue(effect) : () -> null);
+    }
+
+    private Optional<CopperPotRecipe> getAllRecipesFor(RecipeWrapper pInventory, Level pLevel) {
+        return getAllRecipes().stream().filter((p_220266_) -> {
+            return p_220266_.matches(pInventory, pLevel);
+        }).findFirst();
+    }
+
+    protected ItemStack getRecipeContainer() {
+        return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getOutputContainer).orElse(ItemStack.EMPTY);
+    }
+
+    public boolean hasEffect() {
+        return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::hasEffect).orElse(false);
+    }
+
+    public String getEffect() {
+        return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffect).orElse("");
+    }
+
+    public int getEffectDuration() {
+        return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectDuration).orElse(100);
+    }
+
+    public int getEffectAmplifier() {
+        return getAllRecipesFor(new RecipeWrapper(this.inventory), this.level).map(CopperPotRecipe::getEffectAmplifier).orElse(0);
+    }
+
+    public static void animationTick(Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot) {
+        if (copperPot.isHeated(level, pos)) {
+            RandomSource random = level.random;
+            double x;
+            double y;
+            double z;
+            if (random.nextFloat() < 0.07F) {
+                x = (double) pos.getX() + 0.5D + (random.nextDouble() * 0.6D - 0.3D);
+                y = (double) pos.getY() + 0.4D;
+                z = (double) pos.getZ() + 0.5D + (random.nextDouble() * 0.6D - 0.3D);
+                // pick your particles, come pick yourself some particles
+                level.addParticle(ParticleTypes.CRIT, x, y, z, 0.0D, 0.0D, 0.0D);
+            }
+
+            if (random.nextFloat() < 0.03F) {
+                x = (double) pos.getX() + 0.5D + (random.nextDouble() * 0.4D - 0.2D);
+                y = (double) pos.getY() + 0.4D;
+                z = (double) pos.getZ() + 0.5D + (random.nextDouble() * 0.4D - 0.2D);
+                level.addParticle(ParticleTypes.EFFECT, x, y, z, 0.0D, 0.0D, 0.0D);
+            }
+
+        }
+
+    }
+
+    private Optional<? extends CopperPotRecipe> getMatchingRecipe(RecipeWrapper inventoryWrapper) {
+        if (this.level == null) {
+            return Optional.empty();
+        } else {
+            if (lastRecipeID != null) {
+                // get recipe by id
+                Optional<? extends Recipe<?>> recipe = getAllRecipes().stream().filter(aef -> aef.getId() == lastRecipeID).findFirst();
+                if (recipe.isPresent())
+                    if (recipe.get() instanceof CopperPotRecipe copPot) {
+                        if (copPot.matches(inventoryWrapper, level)) {
+                            return Optional.of(copPot);
+                        }
+                        if (ItemStack.isSameItem(copPot.getResultItem(this.level.registryAccess()), getMeal())) {
+                            return Optional.empty();
+                        }
+                    }
+            }
+
+            if (this.checkNewRecipe) {
+                Optional<? extends CopperPotRecipe> recipe = getAllRecipesFor(inventoryWrapper, this.level);
+                if (recipe.isPresent()) {
+                    ResourceLocation newRecipeID = (recipe.get()).getId();
+                    if (this.lastRecipeID != null && !this.lastRecipeID.equals(newRecipeID)) {
+                        this.cookTime = 0;
+                    }
+
+                    this.lastRecipeID = newRecipeID;
+                    return recipe;
+                }
+            }
+
+            this.checkNewRecipe = false;
+            return Optional.empty();
+        }
+    }
+
+    public ItemStack getContainer() {
+        ItemStack mealStack = this.getMeal();
+        return !mealStack.isEmpty() && !this.mealContainerStack.isEmpty() ? this.mealContainerStack : mealStack.getCraftingRemainingItem();
+    }
+
+    private boolean hasInput() {
+        for (int i = 0; i < 2; ++i) {
+            if (!this.inventory.getStackInSlot(i).isEmpty()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    protected boolean canCook(@Nullable Recipe<RecipeWrapper> recipe) {
+        if (this.hasInput() && recipe != null) {
+            ItemStack recipeOutput = recipe.getResultItem(this.level.registryAccess());
+            if (recipeOutput.isEmpty()) {
+                return false;
+            } else {
+                ItemStack currentOutput = this.inventory.getStackInSlot(3);
+                if (currentOutput.isEmpty()) {
+                    return true;
+                } else if (!currentOutput.is(recipeOutput.getItem())) {
+                    return false;
+                } else if (currentOutput.getCount() + recipeOutput.getCount() <= Math.min(16, this.inventory.getSlotLimit(3))) {
+                    return true;
+                } else {
+                    return currentOutput.getCount() + recipeOutput.getCount() <= Math.min(16, recipeOutput.getMaxStackSize());
+                }
+            }
+        } else {
             return false;
-         }
-         else {
-            ItemStack currentOutput = this.inventory.getStackInSlot(3);
-            if ( currentOutput.isEmpty() ) {
-               return true;
-            }
-            else if ( !currentOutput.is(recipeOutput.getItem()) ) {
-               return false;
-            }
-            else if ( currentOutput.getCount() + recipeOutput.getCount() <= Math.min(16, this.inventory.getSlotLimit(3)) ) {
-               return true;
-            }
-            else {
-               return currentOutput.getCount() + recipeOutput.getCount() <= Math.min(16, recipeOutput.getMaxStackSize());
-            }
-         }
-      }
-      else {
-         return false;
-      }
-   }
+        }
+    }
 
-   private boolean processCooking( CopperPotRecipe recipe, CopperPotBlockEntity cookingPot ) {
-      if ( this.level == null ) {
-         return false;
-      }
-      else {
-         ++this.cookTime;
-         if ( ( this.cookTime % 30 == 0 ) && this.hasEffect() ) {
-            this.effectCloud(getLevel(), worldPosition);
-         }
-         this.cookTimeTotal = recipe.getCookTime();
-         if ( this.cookTime < this.cookTimeTotal ) {
+    private boolean processCooking(CopperPotRecipe recipe, CopperPotBlockEntity cookingPot) {
+        if (this.level == null) {
             return false;
-         }
-         else {
-            this.cookTime = 0;
-            this.mealContainerStack = recipe.getOutputContainer();
-            ItemStack resultStack = recipe.getResultItem(this.level.registryAccess());
-            ItemStack storedMealStack = this.inventory.getStackInSlot(3);
-            if ( storedMealStack.isEmpty() ) {
-               this.inventory.setStackInSlot(3, resultStack.copy());
+        } else {
+            ++this.cookTime;
+            if ((this.cookTime % 30 == 0) && this.hasEffect()) {
+                this.effectCloud(getLevel(), worldPosition);
             }
-            else if ( ItemStack.isSameItem(storedMealStack, resultStack) ) {
-               storedMealStack.grow(resultStack.getCount());
+            this.cookTimeTotal = recipe.getCookTime();
+            if (this.cookTime < this.cookTimeTotal) {
+                return false;
+            } else {
+                this.cookTime = 0;
+                this.mealContainerStack = recipe.getOutputContainer();
+                ItemStack resultStack = recipe.getResultItem(this.level.registryAccess());
+                ItemStack storedMealStack = this.inventory.getStackInSlot(3);
+                if (storedMealStack.isEmpty()) {
+                    this.inventory.setStackInSlot(3, resultStack.copy());
+                } else if (ItemStack.isSameItem(storedMealStack, resultStack)) {
+                    storedMealStack.grow(resultStack.getCount());
+                }
+
+                cookingPot.setRecipeUsed(recipe);
+
+                for (int i = 0; i < 3; ++i) {
+                    ItemStack slotStack = this.inventory.getStackInSlot(i);
+                    if (slotStack.hasCraftingRemainingItem()) {
+                        this.ejectIngredientRemainder(slotStack.getCraftingRemainingItem());
+                    } else if (INGREDIENT_REMAINDER_OVERRIDES.containsKey(slotStack.getItem())) {
+                        this.ejectIngredientRemainder(((Item) INGREDIENT_REMAINDER_OVERRIDES.get(slotStack.getItem())).getDefaultInstance());
+                    }
+
+                    if (!slotStack.isEmpty()) {
+                        slotStack.shrink(1);
+                    }
+                }
+
+                return true;
             }
+        }
+    }
 
-            cookingPot.setRecipeUsed(recipe);
+    protected void ejectIngredientRemainder(ItemStack remainderStack) {
+        Direction direction = ((Direction) this.getBlockState().getValue(CopperPotBlock.FACING)).getCounterClockWise();
+        double x = (double) this.worldPosition.getX() + 0.5 + (double) direction.getStepX() * 0.25;
+        double y = (double) this.worldPosition.getY() + 0.7;
+        double z = (double) this.worldPosition.getZ() + 0.5 + (double) direction.getStepZ() * 0.25;
+        ItemUtils.spawnItemEntity(this.level, remainderStack, x, y, z, (double) ((float) direction.getStepX() * 0.08F), 0.25, (double) ((float) direction.getStepZ() * 0.08F));
+    }
 
-            for ( int i = 0; i < 3; ++i ) {
-               ItemStack slotStack = this.inventory.getStackInSlot(i);
-               if ( slotStack.hasCraftingRemainingItem() ) {
-                  this.ejectIngredientRemainder(slotStack.getCraftingRemainingItem());
-               }
-               else if ( INGREDIENT_REMAINDER_OVERRIDES.containsKey(slotStack.getItem()) ) {
-                  this.ejectIngredientRemainder(( (Item) INGREDIENT_REMAINDER_OVERRIDES.get(slotStack.getItem()) ).getDefaultInstance());
-               }
+    public void setRecipeUsed(@Nullable Recipe<?> recipe) {
+        if (recipe != null) {
+            ResourceLocation recipeID = recipe.getId();
+            this.usedRecipeTracker.addTo(recipeID, 1);
+        }
 
-               if ( !slotStack.isEmpty() ) {
-                  slotStack.shrink(1);
-               }
+    }
+
+    @Nullable
+    public Recipe<?> getRecipeUsed() {
+        return null;
+    }
+
+    public void awardUsedRecipes(Player player, List<ItemStack> items) {
+        List<Recipe<?>> usedRecipes = this.getUsedRecipesAndPopExperience(player.level(), player.position());
+        player.awardRecipes(usedRecipes);
+        this.usedRecipeTracker.clear();
+    }
+
+    public List<Recipe<?>> getUsedRecipesAndPopExperience(Level level, Vec3 pos) {
+        List<Recipe<?>> list = Lists.newArrayList();
+        ObjectIterator var4 = this.usedRecipeTracker.object2IntEntrySet().iterator();
+
+        while (var4.hasNext()) {
+            Object2IntMap.Entry<ResourceLocation> entry = (Object2IntMap.Entry) var4.next();
+            getAllRecipes().stream().filter(aef -> aef.getId() == entry.getKey()).findFirst().ifPresent((recipe) -> {
+                list.add(recipe);
+                splitAndSpawnExperience((ServerLevel) level, pos, entry.getIntValue(), ((CopperPotRecipe) recipe).getExperience());
+            });
+        }
+
+        return list;
+    }
+
+    private static void splitAndSpawnExperience(ServerLevel level, Vec3 pos, int craftedAmount, float experience) {
+        int expTotal = Mth.floor((float) craftedAmount * experience);
+        float expFraction = Mth.frac((float) craftedAmount * experience);
+        if (expFraction != 0.0F && Math.random() < (double) expFraction) {
+            ++expTotal;
+        }
+
+        ExperienceOrb.award(level, pos, expTotal);
+    }
+
+    public boolean isHeated() {
+        return this.level == null ? false : this.isHeated(this.level, this.worldPosition);
+    }
+
+    public ItemStackHandler getInventory() {
+        return this.inventory;
+    }
+
+    public ItemStack getMeal() {
+        return this.inventory.getStackInSlot(3);
+    }
+
+    public NonNullList<ItemStack> getDroppableInventory() {
+        NonNullList<ItemStack> drops = NonNullList.create();
+
+        for (int i = 0; i < 6; ++i) {
+            if (i != 3) {
+                drops.add(this.inventory.getStackInSlot(i));
             }
+        }
 
-            return true;
-         }
-      }
-   }
+        return drops;
+    }
 
-   protected void ejectIngredientRemainder( ItemStack remainderStack ) {
-      Direction direction = ( (Direction) this.getBlockState().getValue(CopperPotBlock.FACING) ).getCounterClockWise();
-      double x = (double) this.worldPosition.getX() + 0.5 + (double) direction.getStepX() * 0.25;
-      double y = (double) this.worldPosition.getY() + 0.7;
-      double z = (double) this.worldPosition.getZ() + 0.5 + (double) direction.getStepZ() * 0.25;
-      ItemUtils.spawnItemEntity(this.level, remainderStack, x, y, z, (double) ( (float) direction.getStepX() * 0.08F ), 0.25, (double) ( (float) direction.getStepZ() * 0.08F ));
-   }
-
-   public void setRecipeUsed( @Nullable Recipe<?> recipe ) {
-      if ( recipe != null ) {
-         ResourceLocation recipeID = recipe.getId();
-         this.usedRecipeTracker.addTo(recipeID, 1);
-      }
-
-   }
-
-   @Nullable
-   public Recipe<?> getRecipeUsed() {
-      return null;
-   }
-
-   public void awardUsedRecipes( Player player, List<ItemStack> items ) {
-      List<Recipe<?>> usedRecipes = this.getUsedRecipesAndPopExperience(player.level(), player.position());
-      player.awardRecipes(usedRecipes);
-      this.usedRecipeTracker.clear();
-   }
-
-   public List<Recipe<?>> getUsedRecipesAndPopExperience( Level level, Vec3 pos ) {
-      List<Recipe<?>> list = Lists.newArrayList();
-      ObjectIterator var4 = this.usedRecipeTracker.object2IntEntrySet().iterator();
-
-      while ( var4.hasNext() ) {
-         Object2IntMap.Entry<ResourceLocation> entry = (Object2IntMap.Entry) var4.next();
-         getAllRecipes().stream().filter(aef -> aef.getId() ==  entry.getKey()).findFirst().ifPresent(( recipe ) -> {
-            list.add(recipe);
-            splitAndSpawnExperience((ServerLevel) level, pos, entry.getIntValue(), ( (CopperPotRecipe) recipe ).getExperience());
-         });
-      }
-
-      return list;
-   }
-
-   private static void splitAndSpawnExperience( ServerLevel level, Vec3 pos, int craftedAmount, float experience ) {
-      int expTotal = Mth.floor((float) craftedAmount * experience);
-      float expFraction = Mth.frac((float) craftedAmount * experience);
-      if ( expFraction != 0.0F && Math.random() < (double) expFraction ) {
-         ++expTotal;
-      }
-
-      ExperienceOrb.award(level, pos, expTotal);
-   }
-
-   public boolean isHeated() {
-      return this.level == null ? false : this.isHeated(this.level, this.worldPosition);
-   }
-
-   public ItemStackHandler getInventory() {
-      return this.inventory;
-   }
-
-   public ItemStack getMeal() {
-      return this.inventory.getStackInSlot(3);
-   }
-
-   public NonNullList<ItemStack> getDroppableInventory() {
-      NonNullList<ItemStack> drops = NonNullList.create();
-
-      for ( int i = 0; i < 6; ++i ) {
-         if ( i != 3 ) {
-            drops.add(this.inventory.getStackInSlot(i));
-         }
-      }
-
-      return drops;
-   }
-
-   private void moveMealToOutput() {
-      ItemStack mealStack = this.inventory.getStackInSlot(3);
-      ItemStack outputStack = this.inventory.getStackInSlot(5);
-      int mealCount = Math.min(mealStack.getCount(), mealStack.getMaxStackSize() - outputStack.getCount());
-      if ( outputStack.isEmpty() ) {
-         this.inventory.setStackInSlot(5, mealStack.split(mealCount));
-      }
-      else if ( outputStack.getItem() == mealStack.getItem() ) {
-         mealStack.shrink(mealCount);
-         outputStack.grow(mealCount);
-      }
-
-   }
-
-   private void useStoredContainersOnMeal() {
-      ItemStack mealStack = this.inventory.getStackInSlot(3);
-      ItemStack containerInputStack = this.inventory.getStackInSlot(4);
-      ItemStack outputStack = this.inventory.getStackInSlot(5);
-      if ( this.isContainerValid(containerInputStack) && outputStack.getCount() < outputStack.getMaxStackSize() ) {
-         int smallerStackCount = Math.min(mealStack.getCount(), containerInputStack.getCount());
-         int mealCount = Math.min(smallerStackCount, mealStack.getMaxStackSize() - outputStack.getCount());
-         if ( outputStack.isEmpty() ) {
-            containerInputStack.shrink(mealCount);
+    private void moveMealToOutput() {
+        ItemStack mealStack = this.inventory.getStackInSlot(3);
+        ItemStack outputStack = this.inventory.getStackInSlot(5);
+        int mealCount = Math.min(mealStack.getCount(), mealStack.getMaxStackSize() - outputStack.getCount());
+        if (outputStack.isEmpty()) {
             this.inventory.setStackInSlot(5, mealStack.split(mealCount));
-         }
-         else if ( outputStack.getItem() == mealStack.getItem() ) {
+        } else if (outputStack.getItem() == mealStack.getItem()) {
             mealStack.shrink(mealCount);
-            containerInputStack.shrink(mealCount);
             outputStack.grow(mealCount);
-         }
-      }
+        }
 
-   }
+    }
 
-   public ItemStack useHeldItemOnMeal( ItemStack container ) {
-      if ( this.isContainerValid(container) && !this.getMeal().isEmpty() ) {
-         container.shrink(1);
-         return this.getMeal().split(1);
-      }
-      else {
-         return ItemStack.EMPTY;
-      }
-   }
+    private void useStoredContainersOnMeal() {
+        ItemStack mealStack = this.inventory.getStackInSlot(3);
+        ItemStack containerInputStack = this.inventory.getStackInSlot(4);
+        ItemStack outputStack = this.inventory.getStackInSlot(5);
+        if (this.isContainerValid(containerInputStack) && outputStack.getCount() < outputStack.getMaxStackSize()) {
+            int smallerStackCount = Math.min(mealStack.getCount(), containerInputStack.getCount());
+            int mealCount = Math.min(smallerStackCount, mealStack.getMaxStackSize() - outputStack.getCount());
+            if (outputStack.isEmpty()) {
+                containerInputStack.shrink(mealCount);
+                this.inventory.setStackInSlot(5, mealStack.split(mealCount));
+            } else if (outputStack.getItem() == mealStack.getItem()) {
+                mealStack.shrink(mealCount);
+                containerInputStack.shrink(mealCount);
+                outputStack.grow(mealCount);
+            }
+        }
 
-   private boolean doesMealHaveContainer( ItemStack meal ) {
-      return !this.mealContainerStack.isEmpty() || meal.hasCraftingRemainingItem();
-   }
+    }
 
-   public boolean isContainerValid( ItemStack containerItem ) {
-      if ( containerItem.isEmpty() ) {
-         return false;
-      }
-      else {
-         return !this.mealContainerStack.isEmpty() ? ItemStack.isSameItem(this.mealContainerStack, containerItem) : ItemStack.isSameItem(this.getMeal(), containerItem);
-      }
-   }
+    public ItemStack useHeldItemOnMeal(ItemStack container) {
+        if (this.isContainerValid(container) && !this.getMeal().isEmpty()) {
+            container.shrink(1);
+            return this.getMeal().split(1);
+        } else {
+            return ItemStack.EMPTY;
+        }
+    }
 
-   public Component getName() {
-      return (Component) ( this.customName != null ? this.customName : Component.translatable("copperpot.container.copper_pot") );
-   }
+    private boolean doesMealHaveContainer(ItemStack meal) {
+        return !this.mealContainerStack.isEmpty() || meal.hasCraftingRemainingItem();
+    }
 
-   public Component getDisplayName() {
-      return this.getName();
-   }
+    public boolean isContainerValid(ItemStack containerItem) {
+        if (containerItem.isEmpty()) {
+            return false;
+        } else {
+            return !this.mealContainerStack.isEmpty() ? ItemStack.isSameItem(this.mealContainerStack, containerItem) : ItemStack.isSameItem(this.getMeal(), containerItem);
+        }
+    }
 
-   @Nullable
-   public Component getCustomName() {
-      return this.customName;
-   }
+    public Component getName() {
+        return (Component) (this.customName != null ? this.customName : Component.translatable("copperpot.container.copper_pot"));
+    }
 
-   public void setCustomName( Component name ) {
-      this.customName = name;
-   }
+    public Component getDisplayName() {
+        return this.getName();
+    }
 
-   public AbstractContainerMenu createMenu( int id, Inventory player, Player entity ) {
-      return new CopperPotMenu(id, player, this, this.copperPotMenu);
-   }
+    @Nullable
+    public Component getCustomName() {
+        return this.customName;
+    }
 
-   @Nonnull
-   public <T> LazyOptional<T> getCapability( Capability<T> cap, @Nullable Direction side ) {
-      if ( cap.equals(ForgeCapabilities.ITEM_HANDLER) ) {
-         return side != null && !side.equals(Direction.UP) ? this.outputHandler.cast() : this.inputHandler.cast();
-      }
-      else {
-         return super.getCapability(cap, side);
-      }
-   }
+    public void setCustomName(Component name) {
+        this.customName = name;
+    }
 
-   public void setRemoved() {
-      super.setRemoved();
-      this.inputHandler.invalidate();
-      this.outputHandler.invalidate();
-   }
+    public AbstractContainerMenu createMenu(int id, Inventory player, Player entity) {
+        return new CopperPotMenu(id, player, this, this.copperPotMenu);
+    }
 
-   public CompoundTag getUpdateTag() {
-      return this.writeItems(new CompoundTag());
-   }
+    @Nonnull
+    public <T> LazyOptional<T> getCapability(Capability<T> cap, @Nullable Direction side) {
+        if (cap.equals(ForgeCapabilities.ITEM_HANDLER)) {
+            return side != null && !side.equals(Direction.UP) ? this.outputHandler.cast() : this.inputHandler.cast();
+        } else {
+            return super.getCapability(cap, side);
+        }
+    }
 
-   private ItemStackHandler createHandler() {
-      return new ItemStackHandler(6) {
-         protected void onContentsChanged( int slot ) {
-            if ( slot >= 0 && slot < 3 ) {
-               checkNewRecipe = true;
+    public void setRemoved() {
+        super.setRemoved();
+        this.inputHandler.invalidate();
+        this.outputHandler.invalidate();
+    }
+
+    public CompoundTag getUpdateTag() {
+        return this.writeItems(new CompoundTag());
+    }
+
+    private ItemStackHandler createHandler() {
+        return new ItemStackHandler(6) {
+            protected void onContentsChanged(int slot) {
+                if (slot >= 0 && slot < 3) {
+                    checkNewRecipe = true;
+                }
+
+                inventoryChanged();
+            }
+        };
+    }
+
+    private ContainerData createIntArray() {
+        return new ContainerData() {
+            public int get(int index) {
+                int var10000;
+                switch (index) {
+                    case 0:
+                        var10000 = cookTime;
+                        break;
+                    case 1:
+                        var10000 = cookTimeTotal;
+                        break;
+                    default:
+                        var10000 = 0;
+                }
+
+                return var10000;
             }
 
-            inventoryChanged();
-         }
-      };
-   }
+            public void set(int index, int value) {
+                switch (index) {
+                    case 0:
+                        cookTime = value;
+                        break;
+                    case 1:
+                        cookTimeTotal = value;
+                }
 
-   private ContainerData createIntArray() {
-      return new ContainerData() {
-         public int get( int index ) {
-            int var10000;
-            switch ( index ) {
-               case 0:
-                  var10000 = cookTime;
-                  break;
-               case 1:
-                  var10000 = cookTimeTotal;
-                  break;
-               default:
-                  var10000 = 0;
             }
 
-            return var10000;
-         }
-
-         public void set( int index, int value ) {
-            switch ( index ) {
-               case 0:
-                  cookTime = value;
-                  break;
-               case 1:
-                  cookTimeTotal = value;
+            public int getCount() {
+                return 2;
             }
+        };
+    }
 
-         }
-
-         public int getCount() {
-            return 2;
-         }
-      };
-   }
-
-   static {
-      INGREDIENT_REMAINDER_OVERRIDES = Map.ofEntries(Map.entry(Items.POWDER_SNOW_BUCKET, Items.BUCKET), Map.entry(Items.AXOLOTL_BUCKET, Items.BUCKET), Map.entry(Items.COD_BUCKET, Items.BUCKET), Map.entry(Items.PUFFERFISH_BUCKET, Items.BUCKET), Map.entry(Items.SALMON_BUCKET, Items.BUCKET), Map.entry(Items.TROPICAL_FISH_BUCKET, Items.BUCKET), Map.entry(Items.SUSPICIOUS_STEW, Items.BOWL), Map.entry(Items.MUSHROOM_STEW, Items.BOWL), Map.entry(Items.RABBIT_STEW, Items.BOWL), Map.entry(Items.BEETROOT_SOUP, Items.BOWL), Map.entry(Items.POTION, Items.GLASS_BOTTLE), Map.entry(Items.SPLASH_POTION, Items.GLASS_BOTTLE), Map.entry(Items.LINGERING_POTION, Items.GLASS_BOTTLE), Map.entry(Items.EXPERIENCE_BOTTLE, Items.GLASS_BOTTLE));
-   }
+    static {
+        INGREDIENT_REMAINDER_OVERRIDES = Map.ofEntries(Map.entry(Items.POWDER_SNOW_BUCKET, Items.BUCKET), Map.entry(Items.AXOLOTL_BUCKET, Items.BUCKET), Map.entry(Items.COD_BUCKET, Items.BUCKET), Map.entry(Items.PUFFERFISH_BUCKET, Items.BUCKET), Map.entry(Items.SALMON_BUCKET, Items.BUCKET), Map.entry(Items.TROPICAL_FISH_BUCKET, Items.BUCKET), Map.entry(Items.SUSPICIOUS_STEW, Items.BOWL), Map.entry(Items.MUSHROOM_STEW, Items.BOWL), Map.entry(Items.RABBIT_STEW, Items.BOWL), Map.entry(Items.BEETROOT_SOUP, Items.BOWL), Map.entry(Items.POTION, Items.GLASS_BOTTLE), Map.entry(Items.SPLASH_POTION, Items.GLASS_BOTTLE), Map.entry(Items.LINGERING_POTION, Items.GLASS_BOTTLE), Map.entry(Items.EXPERIENCE_BOTTLE, Items.GLASS_BOTTLE));
+    }
 }

@@ -18,7 +18,6 @@ import net.minecraftforge.registries.tags.ITag;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -46,7 +45,6 @@ public class SeasonalAgarItem extends Item {
             if (tag.contains(inst.getEffect()) && inst.isVisible() && inst.getDuration() > 10) {
                 MobEffectInstance extended = new MobEffectInstance(inst.getEffect(), inst.getDuration() + player.getRandom().nextInt(100) + 100, inst.getAmplifier());
                 player.addEffect(extended);
-                player.getActiveEffects().remove(inst);
             }
         }
     }
@@ -55,7 +53,7 @@ public class SeasonalAgarItem extends Item {
     @OnlyIn(Dist.CLIENT)
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced ) {
         MutableComponent prefix = Component.translatable("copperpot.tooltip.seasonal_agar.prefix");
-        pTooltipComponents.add(prefix.withStyle(ChatFormatting.BLUE));
+        pTooltipComponents.add(prefix.withStyle(ChatFormatting.GRAY));
         ITag<MobEffect> tag = Objects.requireNonNull(ForgeRegistries.MOB_EFFECTS.tags()).getTag(this.effects);
         List<MobEffect> list = tag.stream().toList();
         for (MobEffect effect : list) {

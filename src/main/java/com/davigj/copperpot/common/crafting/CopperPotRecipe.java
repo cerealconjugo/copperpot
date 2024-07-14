@@ -223,7 +223,7 @@ public class CopperPotRecipe implements Recipe<RecipeWrapper> {
             if ( GsonHelper.isValidNode(json, "effect") ) {
                JsonObject effectJson = GsonHelper.getAsJsonObject(json, "effect");
                String effect = GsonHelper.getAsString(effectJson, "type");
-               int effectDuration = GsonHelper.getAsInt(effectJson, "duration",30);
+               int effectDuration = GsonHelper.getAsInt(effectJson, "duration",40);
                int effectAmplifier = GsonHelper.getAsInt(effectJson, "amplifier",0);
                return new CopperPotRecipe(recipeId, groupIn, inputItemsIn, outputIn, container, experienceIn, cookTimeIn, effect, effectDuration, effectAmplifier);
             }
