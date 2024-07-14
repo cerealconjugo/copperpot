@@ -18,17 +18,18 @@ public class CopperPotConfig {
    }
 
    public static class Common {
-      // initialize
       public final ForgeConfigSpec.ConfigValue<List<String>> mooncakeBadReactDims;
       public final ForgeConfigSpec.DoubleValue copperFumeRadius;
+      public final ForgeConfigSpec.BooleanValue recipeReg;
 
-      // define
       Common(ForgeConfigSpec.Builder builder) {
          mooncakeBadReactDims = builder.comment("A list of dimensions in which mooncakes apply adverse effects " +
                  "to the player when consumed, usually due to the lack of a moon.").define("mooncakeBadReactDims",
                  Lists.newArrayList("minecraft:the_nether", "minecraft:the_end"));
-         copperFumeRadius = builder.comment("The horizontal radius for which copper pots will grant effects with no fume inhibitors involved.")
-                 .defineInRange("copperFumeRadius", 3.0D, 1.0D, Double.MAX_VALUE);
+         copperFumeRadius = builder.comment("Horizontal radius for copper pots granting without fume inhibitors involved. 0 block distance min, 5 max")
+                 .defineInRange("copperFumeRadius", 2.0D, 0.0D, 5.0D);
+         recipeReg = builder.comment("Do copper pots automatically register cooking pot recipes with less than 4 slots")
+                 .define("recipeRegistration", false);
       }
    }
 }

@@ -63,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 
 public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvider, HeatableBlockEntity, Nameable, RecipeHolder {
@@ -280,13 +281,16 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
         List<CopperPotRecipe> copperPot = this.level.getRecipeManager().getAllRecipesFor(CPRecipeTypes.COPPER_POT.get()).stream().toList();
         List<ItemStack> results = copperPot.stream().map((e) -> e.getResultItem(null)).toList();
 
-        List<CopperPotRecipe> cookingPot = this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
-                .filter(recipe -> recipe.getIngredients().size() < 4)
-                .filter(recipe -> results.stream().noneMatch((e) -> e.is(recipe.getResultItem(null).getItem())))
-                .map(CopperPotRecipe::fromRecipe)
-                .toList();
+        if (CopperPotConfig.COMMON.recipeReg.get()) {
+            List<CopperPotRecipe> cookingPot = this.level.getRecipeManager().getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
+                    .filter(recipe -> recipe.getIngredients().size() < 4)
+                    .filter(recipe -> results.stream().noneMatch((e) -> e.is(recipe.getResultItem(null).getItem())))
+                    .map(CopperPotRecipe::fromRecipe)
+                    .toList();
 
-        return List.of(copperPot, cookingPot).stream().flatMap(List::stream).toList();
+            return List.of(copperPot, cookingPot).stream().flatMap(List::stream).toList();
+        }
+        return Stream.of(copperPot).flatMap(List::stream).toList();
     }
 
     private static Supplier<MobEffect> getCookEffect(String modid, ResourceLocation effect) {

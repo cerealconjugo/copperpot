@@ -1,5 +1,6 @@
 package com.davigj.copperpot.integration.jei;
 
+import com.davigj.copperpot.CopperPotConfig;
 import com.davigj.copperpot.common.crafting.CopperPotRecipe;
 import com.davigj.copperpot.core.registry.CPRecipeTypes;
 import net.minecraft.client.Minecraft;
@@ -30,14 +31,16 @@ public class JEICPRecipes {
       List<CopperPotRecipe> copperPot = recipeManager.getAllRecipesFor(CPRecipeTypes.COPPER_POT.get()).stream().toList();
       List<ItemStack> results = copperPot.stream().map(( e)->e.getResultItem(null)).toList();
 
-      List<CopperPotRecipe> cookingPot = recipeManager.getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
-              .filter(recipe->recipe.getIngredients().size()<4)
-              .filter(recipe-> results.stream().noneMatch(( e ) -> e.is(recipe.getResultItem(null).getItem())))
-              .map(CopperPotRecipe::fromRecipe)
-              .toList();
+      if (CopperPotConfig.COMMON.recipeReg.get()) {
+         List<CopperPotRecipe> cookingPot = recipeManager.getAllRecipesFor(ModRecipeTypes.COOKING.get()).stream()
+                 .filter(recipe->recipe.getIngredients().size()<4)
+                 .filter(recipe-> results.stream().noneMatch(( e ) -> e.is(recipe.getResultItem(null).getItem())))
+                 .map(CopperPotRecipe::fromRecipe)
+                 .toList();
 
-
-      return List.of(copperPot, cookingPot).stream().flatMap(List::stream).toList();
+         return List.of(copperPot, cookingPot).stream().flatMap(List::stream).toList();
+      }
+      return List.of(copperPot).stream().flatMap(List::stream).toList();
    }
 
 }
