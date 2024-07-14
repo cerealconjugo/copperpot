@@ -27,7 +27,6 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.Nameable;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
-import net.minecraft.world.entity.AreaEffectCloud;
 import net.minecraft.world.entity.ExperienceOrb;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Inventory;
@@ -42,6 +41,7 @@ import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -53,7 +53,7 @@ import net.minecraftforge.items.wrapper.RecipeWrapper;
 import net.minecraftforge.registries.ForgeRegistries;
 import vectorwing.farmersdelight.common.block.entity.HeatableBlockEntity;
 import vectorwing.farmersdelight.common.block.entity.SyncedBlockEntity;
-import vectorwing.farmersdelight.common.registry.*;
+import vectorwing.farmersdelight.common.registry.ModRecipeTypes;
 import vectorwing.farmersdelight.common.utility.ItemUtils;
 
 import javax.annotation.Nonnull;
@@ -210,24 +210,15 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
         }
     }
 
-
-    private void effectCloud(Level worldIn, BlockPos pos) {
-        AreaEffectCloud steam = createSteamCloud(worldIn, pos);
+    private void effectCloud(Level level, BlockPos pos) {
         String effect = this.getEffect();
-
         if (effect != null) {
             MobEffectInstance effectInstance = createEffectInstance(effect);
-            applyEffectToEntities(worldIn, steam, effectInstance);
-            steam.addEffect(effectInstance);
-            worldIn.addFreshEntity(steam);
+            double radius = fumesRadius(level, pos);
+            for (LivingEntity living : level.getEntitiesOfClass(LivingEntity.class, new AABB(pos).inflate(radius, 2.0D, radius))) {
+                living.addEffect(effectInstance);
+            }
         }
-    }
-
-    private AreaEffectCloud createSteamCloud(Level worldIn, BlockPos pos) {
-        AreaEffectCloud steam = new AreaEffectCloud(worldIn, pos.getX() + 0.5D, pos.getY() + 0.25D, pos.getZ() + 0.5D);
-        steam.setDuration(15);
-        steam.setRadius(0.1F);
-        return steam;
     }
 
     private MobEffectInstance createEffectInstance(String effect) {
@@ -235,13 +226,6 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
         int effectDuration = this.getEffectDuration();
         int effectAmplifier = this.getEffectAmplifier();
         return new MobEffectInstance(getCookEffect(effectName[0], new ResourceLocation(effectName[0], effectName[1])).get(), effectDuration, effectAmplifier, false, true);
-    }
-
-    private void applyEffectToEntities(Level worldIn, AreaEffectCloud steam, MobEffectInstance effectInstance) {
-        double radius = fumesRadius(worldIn, steam.blockPosition());
-        for (LivingEntity living : steam.level().getEntitiesOfClass(LivingEntity.class, steam.getBoundingBox().inflate(radius, 2.0D, radius))) {
-            living.addEffect(effectInstance);
-        }
     }
 
     private double fumesRadius(Level worldIn, BlockPos pos) {
@@ -337,23 +321,27 @@ public class CopperPotBlockEntity extends SyncedBlockEntity implements MenuProvi
 
     public static void animationTick(Level level, BlockPos pos, BlockState state, CopperPotBlockEntity copperPot) {
         if (copperPot.isHeated(level, pos)) {
-            RandomSource random = level.random;
+            RandomSource random = level.getRandom();
             double x;
             double y;
             double z;
-            if (random.nextFloat() < 0.07F) {
-                x = (double) pos.getX() + 0.5D + (random.nextDouble() * 0.6D - 0.3D);
-                y = (double) pos.getY() + 0.4D;
-                z = (double) pos.getZ() + 0.5D + (random.nextDouble() * 0.6D - 0.3D);
-                // pick your particles, come pick yourself some particles
-                level.addParticle(ParticleTypes.CRIT, x, y, z, 0.0D, 0.0D, 0.0D);
-            }
-
-            if (random.nextFloat() < 0.03F) {
+            if (random.nextFloat() < 0.08F && copperPot.hasEffect()) {
                 x = (double) pos.getX() + 0.5D + (random.nextDouble() * 0.4D - 0.2D);
                 y = (double) pos.getY() + 0.4D;
                 z = (double) pos.getZ() + 0.5D + (random.nextDouble() * 0.4D - 0.2D);
-                level.addParticle(ParticleTypes.EFFECT, x, y, z, 0.0D, 0.0D, 0.0D);
+                if (!copperPot.hasEffect()) {
+                    if (random.nextBoolean()) {
+                        level.addParticle(ParticleTypes.EFFECT, x, y, z, 0.0D, 0.0D, 0.0D);
+                    }
+                } else {
+                    String effect = copperPot.getEffect();
+                    MobEffectInstance instance = copperPot.createEffectInstance(effect);
+                    int i = instance.getEffect().getColor();
+                    double d0 = (double)(i >> 16 & 255) / 255.0D;
+                    double d1 = (double)(i >> 8 & 255) / 255.0D;
+                    double d2 = (double)(i & 255) / 255.0D;
+                    level.addParticle(ParticleTypes.ENTITY_EFFECT, x, y, z, d0, d1, d2);
+                }
             }
 
         }
