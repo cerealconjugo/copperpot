@@ -12,7 +12,7 @@
   "item.copperpot.aestival_agar": "Agar estival",
   "item.copperpot.brumal_agar": "Agar brumal",
   "item.copperpot.vernal_agar": "Agar vernal",
-  "item.copperpot.creeping_yogurt": "Yogur gaseoso",
+  "item.copperpot.creeping_yogurt": "Yogurt gaseoso",
   "item.copperpot.royal_jelly": "Jalea real",
   "item.copperpot.mooncake": "Pastel lunar",
   "item.copperpot.sourdough": "Pan agrio",
@@ -34,14 +34,14 @@
   "copperpot.tooltip.seasonal_agar.prefix": "Extiende:",
   "copperpot.tooltip.royal_jelly.when_feeding": "Cuando se alimenta a una abeja",
   "copperpot.tooltip.royal_jelly.when_eating": "Revierte el envenenamiento",
-  "copperpot.tooltip.royal_jelly.fix_bee": " Restores Stinger",
-  "copperpot.tooltip.mooncake.tip": "Tranquilidad Lunar",
+  "copperpot.tooltip.royal_jelly.fix_bee": "Revierte la picadura",
+  "copperpot.tooltip.mooncake.tip": "Tranquilidad lunar",
   "copperpot.tooltip.tropical_meringue.tip": "Puede aumentar la agilidad",
-  "copperpot.tooltip.tropical_meringue.tip2": "o aumentar el escupitajo",
-  "copperpot.tooltip.mint_meringue.tip": "Puede aumentar el Berserking",
+  "copperpot.tooltip.tropical_meringue.tip2": "o aumentar la salivación",
+  "copperpot.tooltip.mint_meringue.tip": "Puede aumentar el frenesí",
   "copperpot.tooltip.mint_meringue.tip2": "o subidón de azúcar",
   "copperpot.tooltip.spiced_apple_jam.tip": "Puede aumentar el mantenimiento",
   "copperpot.tooltip.spiced_apple_jam.tip2": "o apoyo",
   "copperpot.tooltip.guardian_souffle.tip": "Convierte los efectos negativos a",
-  "copperpot.tooltip.guardian_souffle.tip2": "Salud instantánea bajo el agua"
+  "copperpot.tooltip.guardian_souffle.tip2": "Salud instantánea debajo el agua"
 }
